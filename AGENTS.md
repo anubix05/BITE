@@ -957,3 +957,37 @@ Every feature should satisfy this principle:
 **"A first-time user should be able to log a meal in under 10 seconds without reading instructions."**
 
 If a feature increases friction instead of reducing it, redesign it until it feels effortless.
+
+---
+
+# Implemented Features Status (v1.3.0)
+
+The following features have been fully implemented, built, and verified in the codebase:
+
+### 1. Meal Logging & AI Parsing
+- [x] **Natural Language Text Logging**: Flexible input parsing (e.g. *"1 plate chicken biryani and Pepsi"*).
+- [x] **Photo & Multimodal Logging**: Camera/Gallery photo analysis with optional context instructions.
+- [x] **Speech-to-Text Voice Logging**: Real-time microphone listening & transcription via `speech_to_text`.
+- [x] **Smart Meal Memory**: Favorite and save meals to local memory for instant 1-tap re-logging.
+- [x] **Strict JSON AI Integration**: Structured response mapping via Gemini 2.5 Flash API with user-editable results.
+
+### 2. Dashboard & Navigation
+- [x] **Nutrition Snapshot**: Macro progress indicators (Calories, Protein, Carbs, Fat) vs local daily goals with progress colors.
+- [x] **Journal Timeline**: Chronological daily meal list with quick edit, favorite toggle, and delete options.
+- [x] **Jump to Today Button**: Instant date reset across Dashboard, History, and Calendar headers.
+
+### 3. History & Analytics
+- [x] **Searchable Meal History**: Real-time keyword filtering, date range navigation, and swipe-to-delete with undo.
+- [x] **Interactive Macro Trends**: 7-day, 4-week, and 3-month charts powered by `fl_chart` with average intake metrics.
+
+### 4. Calendar View
+- [x] **Google Calendar Style Month Slider**: Smooth, real-time horizontal `PageView.builder` month sliding with haptic feedback.
+- [x] **Selected Date Auto-Focus**: Calendar automatically focuses on the active selected date's month.
+- [x] **Color-Coded Status Tiles**: Green (within goal), Red (exceeded goal), Gray (no data).
+
+### 5. Settings, Themes & Data Privacy
+- [x] **Nutrition Goals Config**: Customizable daily targets (Calories, Protein, Carbs, Fat) via expressive sliders or direct numeric entry.
+- [x] **Material 3 Expressive Design**: System, Light, and Dark mode support + 9 custom theme color accents with clean Light Mode indicators.
+- [x] **Gemini API Key Management**: Custom API key override setting saved securely in local preferences.
+- [x] **Offline-First & Local Storage**: 100% local database powered by Isar DB; zero cloud analytics or history uploads.
+- [x] **ZIP Export & Import**: Native Android Storage Access Framework file saving menu + smart deduplicating backup restoration.
