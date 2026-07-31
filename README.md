@@ -1,8 +1,26 @@
+<p align="center">
+  <img src="assets/images/app_logo.png" alt="Bite App Logo" width="140" />
+</p>
+
 # Bite 🍽️
 
 > **"Describe what you ate. Let the AI do the rest."**
 
 Bite is a modern, privacy-first, AI-powered nutrition and meal tracking application built with Flutter. It replaces tedious form-filling with natural language understanding and photo recognition—powered locally with offline-first storage and Google Gemini AI.
+
+---
+
+## 📱 Screenshots
+
+<p align="center">
+  <img src="assets/screenshots/dashboard.png" width="210" alt="Dashboard Snapshot" />
+  &nbsp;
+  <img src="assets/screenshots/log_meal.png" width="210" alt="AI Meal Logging" />
+  &nbsp;
+  <img src="assets/screenshots/history.png" width="210" alt="Meal History & Journal" />
+  &nbsp;
+  <img src="assets/screenshots/analytics.png" width="210" alt="Macro Trends & Analytics" />
+</p>
 
 ---
 
@@ -67,7 +85,7 @@ lib/
     ├── calendar/              # Google Calendar style month slider
     ├── dashboard/             # Home view, nutrition snapshot, timeline
     ├── history/               # Chronological journal & meal search
-    ├── log_meal/              # Text, photo, voice logging sheet
+    ├── log_meal/              # Text & photo logging sheet
     ├── meal_detail/           # Detail view & meal editor
     ├── onboarding/            # Initial nutrition goals setup
     └── settings/              # Custom colors, goals, backup/restore, API key
