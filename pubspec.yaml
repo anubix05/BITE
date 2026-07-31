@@ -1,0 +1,78 @@
+name: bite
+description: AI-powered meal tracker — describe what you ate, let the AI do the rest.
+publish_to: 'none'
+version: 1.3.0+30
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management & Navigation
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.4.0
+  go_router: ^14.6.2
+
+  # Local DB & Storage
+  isar: ^3.1.0+1
+  isar_flutter_libs: ^3.1.0+1
+  path_provider: ^2.1.4
+
+  # AI & Networking
+  google_generative_ai: ^0.4.6
+  dio: ^5.7.0
+
+  # UI & Media
+  fl_chart: ^0.69.0
+  google_fonts: ^6.2.1
+  image_picker: ^1.1.2
+  shimmer: ^3.0.0
+  intl: ^0.19.0
+  dynamic_color: ^1.7.0
+  archive: ^3.6.1
+  file_picker: ^8.1.7
+  share_plus: ^10.0.2
+
+  # Notifications
+  flutter_local_notifications: ^17.2.2
+  timezone: ^0.9.4
+
+  # Environment
+  flutter_dotenv: ^5.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  build_runner: ^2.4.12
+  isar_generator: ^3.1.0+1
+  riverpod_generator: ^2.4.0
+  flutter_launcher_icons: ^0.14.3
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - .env
+    - assets/images/
+
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: false
+  image_path: "assets/images/app_icon.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/app_icon_foreground.png"
+  adaptive_icon_monochrome: "assets/images/app_icon_monochrome.png"
+  web:
+    generate: true
+    image_path: "assets/images/app_icon.png"
+    background_color: "#FFFFFF"
+    theme_color: "#000000"
+  windows:
+    generate: true
+    image_path: "assets/images/app_icon.png"
+    icon_size: 256
+
