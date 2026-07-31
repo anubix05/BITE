@@ -2,7 +2,7 @@
 
 > **"Describe what you ate. Let the AI do the rest."**
 
-Bite is a modern, privacy-first, AI-powered nutrition and meal tracking application built with Flutter. It replaces tedious form-filling with natural language understanding, photo recognition, and effortless voice logging—powered locally with offline-first storage and Google Gemini AI.
+Bite is a modern, privacy-first, AI-powered nutrition and meal tracking application built with Flutter. It replaces tedious form-filling with natural language understanding and photo recognition—powered locally with offline-first storage and Google Gemini AI.
 
 ---
 
@@ -10,7 +10,6 @@ Bite is a modern, privacy-first, AI-powered nutrition and meal tracking applicat
 
 - 🗣️ **Natural Language Logging**: Type naturally like *"One plate chicken biryani"*, *"2 eggs and toast"*, or *"Half bowl oats"*.
 - 📸 **Photo & Multimodal Analysis**: Take a photo of your meal with optional context (*"Extra chicken, less rice"*) and let Gemini AI estimate nutrition & portions.
-- 🎙️ **Voice Logging**: Speak what you ate naturally—transcribed and analyzed seamlessly.
 - 🧠 **Smart Meal Memory**: Favorite and save frequently eaten meals to log them with a single tap.
 - 📊 **Real-time Dashboard & Macro Snapshot**: Instant visual feedback on daily calories, protein, carbs, and fat with animated progress indicators.
 - 📅 **Google Calendar Style Month Slider**: Smooth, real-time horizontal page swiping across months with haptic feedback and automatic selected-date focusing.
@@ -25,7 +24,7 @@ Bite is a modern, privacy-first, AI-powered nutrition and meal tracking applicat
 
 Logging a meal in Bite takes **under 5 seconds**:
 
-1. **Tap Log Meal** (or press Voice/Photo shortcut).
+1. **Tap Log Meal** (or press Photo shortcut).
 2. **Describe your meal** in natural words.
 3. **Confirm AI estimates**—edit any portion or nutrient value if desired.
 

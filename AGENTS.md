@@ -967,7 +967,6 @@ The following features have been fully implemented, built, and verified in the c
 ### 1. Meal Logging & AI Parsing
 - [x] **Natural Language Text Logging**: Flexible input parsing (e.g. *"1 plate chicken biryani and Pepsi"*).
 - [x] **Photo & Multimodal Logging**: Camera/Gallery photo analysis with optional context instructions.
-- [x] **Speech-to-Text Voice Logging**: Real-time microphone listening & transcription via `speech_to_text`.
 - [x] **Smart Meal Memory**: Favorite and save meals to local memory for instant 1-tap re-logging.
 - [x] **Strict JSON AI Integration**: Structured response mapping via Gemini 2.5 Flash API with user-editable results.
 
