@@ -82,16 +82,16 @@ class GeminiService {
     String? settingsKey;
     try {
       final settings = await isarService.getOrCreateSettings();
-      if (settings.geminiApiKeyOverride?.isNotEmpty == true) {
-        settingsKey = settings.geminiApiKeyOverride;
+      if (settings.geminiApiKeyOverride?.trim().isNotEmpty == true) {
+        settingsKey = settings.geminiApiKeyOverride!.trim();
       }
     } catch (_) {
       // DB not initialized in headless tests
     }
 
-    final key = (apiKeyOverride?.isNotEmpty == true ? apiKeyOverride : null) ??
+    final key = (apiKeyOverride?.trim().isNotEmpty == true ? apiKeyOverride!.trim() : null) ??
         settingsKey ??
-        dotenv.env['GEMINI_API_KEY'] ??
+        dotenv.env['GEMINI_API_KEY']?.trim() ??
         '';
 
     if (key.isEmpty || key == 'YOUR_GEMINI_API_KEY_HERE') {

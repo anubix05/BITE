@@ -61,8 +61,10 @@ class SettingsNotifier extends _$SettingsNotifier {
   }
 
   Future<void> setGeminiApiKey(String? key) async {
+    final trimmedKey = key?.trim();
     final current = await future;
-    current.geminiApiKeyOverride = key;
+    current.geminiApiKeyOverride =
+        (trimmedKey != null && trimmedKey.isNotEmpty) ? trimmedKey : null;
     await isarService.saveSettings(current);
     ref.invalidate(appSettingsProvider);
     ref.invalidateSelf();

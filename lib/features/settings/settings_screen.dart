@@ -774,8 +774,8 @@ class _ApiKeyTileState extends State<_ApiKeyTile> {
             ],
           ),
         );
-        if (result != null && result.isNotEmpty) {
-          widget.onSave(result);
+        if (result != null) {
+          widget.onSave(result.trim());
         }
       },
     );
