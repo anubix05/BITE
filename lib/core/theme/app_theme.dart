@@ -237,9 +237,9 @@ class AppTheme {
         thickness: 1,
       ),
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: isDark ? cardDark : colorScheme.surfaceContainerHighest,
+        backgroundColor: colorScheme.inverseSurface,
         contentTextStyle: GoogleFonts.inter(
-          color: colorScheme.onSurface,
+          color: colorScheme.onInverseSurface,
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),

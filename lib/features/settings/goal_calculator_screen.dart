@@ -526,16 +526,25 @@ class GoalCalculatorScreen extends ConsumerWidget {
                                   fat: result.targetFatG,
                                 );
                             if (context.mounted) {
+                              final cs = Theme.of(context).colorScheme;
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: const Row(
+                                  content: Row(
                                     children: [
-                                      Icon(Icons.check_circle_rounded, color: Colors.white),
-                                      SizedBox(width: 10),
-                                      Text('Daily nutrition goals updated!'),
+                                      Icon(Icons.check_circle_rounded, color: cs.onInverseSurface),
+                                      const SizedBox(width: 10),
+                                      Text(
+                                        'Daily nutrition goals updated!',
+                                        style: TextStyle(color: cs.onInverseSurface),
+                                      ),
                                     ],
                                   ),
                                   behavior: SnackBarBehavior.floating,
+                                  margin: const EdgeInsets.only(
+                                    bottom: 100,
+                                    left: 16,
+                                    right: 16,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
