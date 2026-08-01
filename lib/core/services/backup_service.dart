@@ -90,7 +90,8 @@ class BackupService {
           final file = File(meal.imagePath!);
           if (await file.exists()) {
             final bytes = await file.readAsBytes();
-            final name = 'images/${meal.id}_${file.uri.pathSegments.last}';
+            final filename = meal.imagePath!.split(RegExp(r'[/\\]')).last;
+            final name = 'images/${meal.id}_$filename';
             archive.addFile(ArchiveFile(name, bytes.length, bytes));
           }
         }
