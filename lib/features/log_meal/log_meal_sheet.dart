@@ -340,7 +340,9 @@ class _InputViewState extends ConsumerState<_InputView> {
     super.initState();
     final now = widget.targetDate ?? DateTime.now();
     _selectedDate = DateTime(now.year, now.month, now.day);
-    _selectedTime = TimeOfDay.fromDateTime(now);
+    final today = DateTime.now();
+    final isDifferentDay = _selectedDate.difference(DateTime(today.year, today.month, today.day)).inDays != 0;
+    _selectedTime = isDifferentDay ? const TimeOfDay(hour: 0, minute: 0) : TimeOfDay.fromDateTime(now);
   }
 
   @override

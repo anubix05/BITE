@@ -84,14 +84,31 @@ class LogMealNotifier extends _$LogMealNotifier {
     DateTime? targetDate,
   }) async {
     final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
     final d = targetDate ?? now;
     final mealDate = DateTime(d.year, d.month, d.day);
+    final isDifferentDay = mealDate.difference(today).inDays != 0;
+
+    final DateTime createdAt;
+    final String timeStr;
+    final MealType mealType;
+
+    if (isDifferentDay) {
+      createdAt = DateTime(d.year, d.month, d.day, 0, 0, 0);
+      timeStr = "00:00";
+      mealType = MealType.breakfast;
+    } else {
+      createdAt = DateTime(d.year, d.month, d.day, now.hour, now.minute, now.second);
+      timeStr = _formatTime(now);
+      mealType = MealType.fromTime(now);
+    }
+
     final meal = Meal()
-      ..createdAt = DateTime(d.year, d.month, d.day, now.hour, now.minute, now.second)
+      ..createdAt = createdAt
       ..updatedAt = now
       ..date = mealDate
-      ..time = _formatTime(now)
-      ..mealType = MealType.fromTime(now)
+      ..time = timeStr
+      ..mealType = mealType
       ..originalUserInput = originalInput
       ..aiInterpretation = result.mealName
       ..aiConfidence = result.confidence
