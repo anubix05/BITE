@@ -312,6 +312,8 @@ Future<void> showApiKeyMissingDialog(BuildContext context) {
     context: context,
     useRootNavigator: true,
     builder: (ctx) => AlertDialog(
+      backgroundColor: cs.surfaceContainerHigh,
+      surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       icon: const Icon(Icons.key_off_rounded, size: 36, color: Colors.amber),
       title: const Text('Gemini API Key Required', textAlign: TextAlign.center),

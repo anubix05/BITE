@@ -194,35 +194,63 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final controller = TextEditingController(
       text: initialValue.toStringAsFixed(initialValue == initialValue.roundToDouble() ? 0 : 1),
     );
+    final cs = Theme.of(context).colorScheme;
 
     showDialog(
       context: context,
+      useRootNavigator: true,
       builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(title),
+        backgroundColor: cs.surfaceContainerHigh,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Text(title, style: TextStyle(color: cs.onSurface, fontWeight: FontWeight.bold)),
         content: TextField(
           controller: controller,
           autofocus: true,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          style: TextStyle(color: cs.onSurface),
           decoration: InputDecoration(
             labelText: label,
-            border: const OutlineInputBorder(),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+            filled: true,
+            fillColor: cs.surfaceContainerLow,
           ),
         ),
+        actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () {
-              final val = double.tryParse(controller.text.trim());
-              if (val != null && val >= min && val <= max) {
-                onSaved(val);
-                Navigator.of(ctx).pop();
-              }
-            },
-            child: const Text('Save'),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  style: OutlinedButton.styleFrom(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    side: BorderSide(color: cs.outline.withValues(alpha: 0.3)),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  child: const Text('Cancel'),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: FilledButton(
+                  onPressed: () {
+                    final val = double.tryParse(controller.text.trim());
+                    if (val != null && val >= min && val <= max) {
+                      onSaved(val);
+                      Navigator.of(ctx).pop();
+                    }
+                  },
+                  style: FilledButton.styleFrom(
+                    backgroundColor: cs.primary,
+                    foregroundColor: cs.onPrimary,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  child: const Text('Save'),
+                ),
+              ),
+            ],
           ),
         ],
       ),
