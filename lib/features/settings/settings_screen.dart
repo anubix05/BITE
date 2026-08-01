@@ -173,7 +173,7 @@ class SettingsScreen extends ConsumerWidget {
                   ListTile(
                     leading: const Icon(Icons.info_outline_rounded),
                     title: const Text('Bite'),
-                    subtitle: const Text('v1.3.0 • AI-powered meal tracker'),
+                    subtitle: const Text('v2.0.0 • AI-powered meal tracker'),
                   ),
                   const SizedBox(height: 40),
                 ]),
