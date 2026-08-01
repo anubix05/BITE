@@ -144,98 +144,107 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
     final cs = Theme.of(context).colorScheme;
     final mq = MediaQuery.of(context);
     final sheetHeight = mq.size.height * 0.90;
-    return Container(
-      height: sheetHeight,
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-      ),
-      child: Column(
-        children: [
-          const SizedBox(height: 12),
-          Center(
-            child: Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: cs.onSurface.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(2),
+    final isSuccess = state.status == LogMealStatus.success;
+
+    return PopScope(
+      canPop: !isSuccess,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        _retainTextAndEdit();
+      },
+      child: Container(
+        height: sheetHeight,
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+        child: Column(
+          children: [
+            const SizedBox(height: 12),
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: cs.onSurface.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
-            child: Row(
-              children: [
-                Text(
-                  'Log Meal',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
-                ),
-                const Spacer(),
-                IconButton(
-                  onPressed: () {
-                    ref.read(logMealNotifierProvider.notifier).reset();
-                    Navigator.of(context).pop();
-                  },
-                  icon: const Icon(Icons.close_rounded),
-                  tooltip: 'Close',
-                ),
-              ],
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
+              child: Row(
+                children: [
+                  Text(
+                    'Log Meal',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    onPressed: () {
+                      ref.read(logMealNotifierProvider.notifier).reset();
+                      Navigator.of(context).pop();
+                    },
+                    icon: const Icon(Icons.close_rounded),
+                    tooltip: 'Close',
+                  ),
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            child: state.status == LogMealStatus.analyzing
-                ? _AnalyzingView()
-                : state.status == LogMealStatus.success && state.result != null
-                    ? _ResultView(
-                        result: state.result!,
-                        originalInput: _textController.text,
-                        imagePath: _imagePath,
-                        onConfirm: () async {
-                          await ref.read(logMealNotifierProvider.notifier).saveMeal(
-                            originalInput: _textController.text,
-                            result: state.result!,
-                            imagePath: _imagePath,
-                            targetDate: widget.targetDate,
-                          );
-                          ref.invalidate(todaySnapshotProvider);
-                          await HapticFeedback.mediumImpact();
-                          if (context.mounted) {
-                            ref.read(logMealNotifierProvider.notifier).reset();
-                            Navigator.of(context).pop();
-                          }
-                        },
-                        onEdit: _retainTextAndEdit,
-                        onResultUpdated: (updatedResult) {
-                          ref.read(logMealNotifierProvider.notifier).setResult(updatedResult);
-                        },
-                      )
-                    : _InputView(
-                        controller: _textController,
-                        focusNode: _focusNode,
-                        imageBytes: _imageBytes,
-                        savedMeals: _savedMeals,
-                        targetDate: widget.targetDate,
-                        errorMessage: state.status == LogMealStatus.error ? state.errorMessage : null,
-                        onSend: _submit,
-                        onCamera: () => _pickImage(ImageSource.camera),
-                        onGallery: () => _pickImage(ImageSource.gallery),
-                        onClearImage: () => setState(() => _imageBytes = null),
-                        onSelectSavedMeal: (meal) {
-                          _textController.text = meal.originalUserInput;
-                          final cachedResult = MealAnalysisResult(
-                            mealName: meal.aiInterpretation ?? meal.originalUserInput,
-                            confidence: 1.0,
-                            needsClarification: false,
-                            items: meal.items,
-                            rawJson: '{"fromMemory": true}',
-                          );
-                          ref.read(logMealNotifierProvider.notifier).setResult(cachedResult);
-                        },
-                      ),
-          ),
-        ],
+            Expanded(
+              child: state.status == LogMealStatus.analyzing
+                  ? _AnalyzingView()
+                  : state.status == LogMealStatus.success && state.result != null
+                      ? _ResultView(
+                          result: state.result!,
+                          originalInput: _textController.text,
+                          imagePath: _imagePath,
+                          onConfirm: () async {
+                            await ref.read(logMealNotifierProvider.notifier).saveMeal(
+                              originalInput: _textController.text,
+                              result: state.result!,
+                              imagePath: _imagePath,
+                              targetDate: widget.targetDate,
+                            );
+                            ref.invalidate(todaySnapshotProvider);
+                            await HapticFeedback.mediumImpact();
+                            if (context.mounted) {
+                              ref.read(logMealNotifierProvider.notifier).reset();
+                              Navigator.of(context).pop();
+                            }
+                          },
+                          onEdit: _retainTextAndEdit,
+                          onResultUpdated: (updatedResult) {
+                            ref.read(logMealNotifierProvider.notifier).setResult(updatedResult);
+                          },
+                        )
+                      : _InputView(
+                          controller: _textController,
+                          focusNode: _focusNode,
+                          imageBytes: _imageBytes,
+                          savedMeals: _savedMeals,
+                          targetDate: widget.targetDate,
+                          errorMessage: state.status == LogMealStatus.error ? state.errorMessage : null,
+                          onSend: _submit,
+                          onCamera: () => _pickImage(ImageSource.camera),
+                          onGallery: () => _pickImage(ImageSource.gallery),
+                          onClearImage: () => setState(() => _imageBytes = null),
+                          onSelectSavedMeal: (meal) {
+                            _textController.text = meal.originalUserInput;
+                            final cachedResult = MealAnalysisResult(
+                              mealName: meal.aiInterpretation ?? meal.originalUserInput,
+                              confidence: 1.0,
+                              needsClarification: false,
+                              items: meal.items,
+                              rawJson: '{"fromMemory": true}',
+                            );
+                            ref.read(logMealNotifierProvider.notifier).setResult(cachedResult);
+                          },
+                        ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -815,9 +824,24 @@ class _ResultView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          Text(
-            result.mealName,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back_rounded),
+                onPressed: onEdit,
+                tooltip: 'Back to input',
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  result.mealName,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+                ),
+              ),
+            ],
           ),
           if (originalInput.isNotEmpty) ...[
             const SizedBox(height: 6),

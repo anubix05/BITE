@@ -119,14 +119,29 @@ class _LogMealScreenState extends ConsumerState<LogMealScreen> {
         );
   }
 
+  void _retainTextAndEdit() {
+    ref.read(logMealNotifierProvider.notifier).reset();
+    setState(() {
+      _imageBytes = null;
+      _imagePath = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(logMealNotifierProvider);
+    final isSuccess = state.status == LogMealStatus.success;
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: SafeArea(
-        child: Column(
+    return PopScope(
+      canPop: !isSuccess,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        _retainTextAndEdit();
+      },
+      child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: SafeArea(
+          child: Column(
           children: [
             // ── Header ──
             Padding(
@@ -186,9 +201,7 @@ class _LogMealScreenState extends ConsumerState<LogMealScreen> {
                               context.pop();
                             }
                           },
-                          onEdit: () => ref
-                              .read(logMealNotifierProvider.notifier)
-                              .reset(),
+                          onEdit: _retainTextAndEdit,
                         )
                       : _InputView(
                           controller: _textController,
@@ -207,8 +220,9 @@ class _LogMealScreenState extends ConsumerState<LogMealScreen> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -490,11 +504,26 @@ class _ResultView extends StatelessWidget {
           ),
 
           const SizedBox(height: 12),
-          Text(
-            result.mealName,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back_rounded),
+                onPressed: onEdit,
+                tooltip: 'Back to input',
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  result.mealName,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
+              ),
+            ],
           ),
 
           const SizedBox(height: 6),
