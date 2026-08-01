@@ -97,7 +97,8 @@ class _LogMealScreenState extends ConsumerState<LogMealScreen> {
     final text = _textController.text.trim();
     if (text.isEmpty && _imageBytes == null) {
       if (mounted) {
-        _showInlineSnackBar('Please describe what you ate or snap a photo to analyze. 🍛');
+        _showInlineSnackBar(
+            'Please describe what you ate or snap a photo to analyze. 🍛');
       }
       return;
     }
@@ -129,9 +130,8 @@ class _LogMealScreenState extends ConsumerState<LogMealScreen> {
     final isSuccess = state.status == LogMealStatus.success;
 
     final cs = Theme.of(context).colorScheme;
-    final dateParam = GoRouterState.of(context).uri.queryParameters['date'];
     final selectedDate = ref.watch(selectedDateProvider);
-    final activeTargetDate = (dateParam != null ? DateTime.tryParse(dateParam) : null) ?? selectedDate;
+    final activeTargetDate = selectedDate;
 
     return PopScope(
       canPop: !isSuccess,
@@ -143,112 +143,114 @@ class _LogMealScreenState extends ConsumerState<LogMealScreen> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: SafeArea(
           child: Column(
-          children: [
-            // ── Header ──
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 12, 16, 0),
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      ref.read(logMealNotifierProvider.notifier).reset();
-                      if (context.canPop()) {
-                        context.pop();
-                      } else {
-                        context.goNamed('dashboard');
-                      }
-                    },
-                    icon: const Icon(Icons.arrow_back_rounded),
-                    tooltip: 'Back',
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Log Meal',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleLarge
-                        ?.copyWith(fontWeight: FontWeight.w700),
-                  ),
-                ],
-              ),
-            ),
-            if (_inlineSnackBarMessage != null)
+            children: [
+              // ── Header ──
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                child: Material(
-                  elevation: 6,
-                  color: cs.surfaceContainerHigh,
-                  borderRadius: BorderRadius.circular(16),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.restaurant_rounded, size: 20, color: Colors.amber),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            _inlineSnackBarMessage!,
-                            style: TextStyle(
-                              color: cs.onSurface,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                padding: const EdgeInsets.fromLTRB(12, 12, 16, 0),
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        ref.read(logMealNotifierProvider.notifier).reset();
+                        if (context.canPop()) {
+                          context.pop();
+                        } else {
+                          context.goNamed('dashboard');
+                        }
+                      },
+                      icon: const Icon(Icons.arrow_back_rounded),
+                      tooltip: 'Back',
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Log Meal',
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleLarge
+                          ?.copyWith(fontWeight: FontWeight.w700),
+                    ),
+                  ],
+                ),
+              ),
+              if (_inlineSnackBarMessage != null)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                  child: Material(
+                    elevation: 6,
+                    color: cs.surfaceContainerHigh,
+                    borderRadius: BorderRadius.circular(16),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 14),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.restaurant_rounded,
+                              size: 20, color: Colors.amber),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              _inlineSnackBarMessage!,
+                              style: TextStyle(
+                                color: cs.onSurface,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            Expanded(
-              child: state.status == LogMealStatus.analyzing
-                  ? _AnalyzingView()
-                  : state.status == LogMealStatus.success &&
-                          state.result != null
-                      ? _ResultView(
-                          result: state.result!,
-                          originalInput: _textController.text,
-                          imagePath: _imagePath,
-                          onConfirm: () async {
-                            await ref
-                                .read(logMealNotifierProvider.notifier)
-                                .saveMeal(
-                                  originalInput: _textController.text,
-                                  result: state.result!,
-                                  imagePath: _imagePath,
-                                  targetDate: activeTargetDate,
-                                );
-                            ref.invalidate(todaySnapshotProvider);
-                            await HapticFeedback.mediumImpact();
-                            if (context.mounted) {
-                              ref
+              Expanded(
+                child: state.status == LogMealStatus.analyzing
+                    ? _AnalyzingView()
+                    : state.status == LogMealStatus.success &&
+                            state.result != null
+                        ? _ResultView(
+                            result: state.result!,
+                            originalInput: _textController.text,
+                            imagePath: _imagePath,
+                            onConfirm: () async {
+                              await ref
                                   .read(logMealNotifierProvider.notifier)
-                                  .reset();
-                              context.pop();
-                            }
-                          },
-                          onEdit: _retainTextAndEdit,
-                        )
-                      : _InputView(
-                          controller: _textController,
-                          focusNode: _focusNode,
-                          imageBytes: _imageBytes,
-                          errorMessage: state.status == LogMealStatus.error
-                              ? state.errorMessage
-                              : null,
-                          onSend: _submit,
-                          onCamera: () => _pickImage(ImageSource.camera),
-                          onGallery: () => _pickImage(ImageSource.gallery),
-                          onClearImage: () =>
-                              setState(() => _imageBytes = null),
-                        ),
-            ),
-          ],
+                                  .saveMeal(
+                                    originalInput: _textController.text,
+                                    result: state.result!,
+                                    imagePath: _imagePath,
+                                    targetDate: activeTargetDate,
+                                  );
+                              ref.invalidate(todaySnapshotProvider);
+                              await HapticFeedback.mediumImpact();
+                              if (context.mounted) {
+                                ref
+                                    .read(logMealNotifierProvider.notifier)
+                                    .reset();
+                                context.pop();
+                              }
+                            },
+                            onEdit: _retainTextAndEdit,
+                          )
+                        : _InputView(
+                            controller: _textController,
+                            focusNode: _focusNode,
+                            imageBytes: _imageBytes,
+                            errorMessage: state.status == LogMealStatus.error
+                                ? state.errorMessage
+                                : null,
+                            onSend: _submit,
+                            onCamera: () => _pickImage(ImageSource.camera),
+                            onGallery: () => _pickImage(ImageSource.gallery),
+                            onClearImage: () =>
+                                setState(() => _imageBytes = null),
+                          ),
+              ),
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -329,7 +331,8 @@ class _InputView extends StatelessWidget {
                               color: Colors.black26,
                               shape: const CircleBorder(),
                               child: IconButton(
-                                icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+                                icon: const Icon(Icons.arrow_back_rounded,
+                                    color: Colors.white),
                                 onPressed: () => Navigator.of(ctx).pop(),
                               ),
                             ),
@@ -359,7 +362,8 @@ class _InputView extends StatelessWidget {
                         color: Colors.black54,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.close, color: Colors.white, size: 16),
+                      child: const Icon(Icons.close,
+                          color: Colors.white, size: 16),
                     ),
                   ),
                 ),
@@ -391,12 +395,14 @@ class _InputView extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.error_outline, color: cs.onErrorContainer, size: 18),
+                  Icon(Icons.error_outline,
+                      color: cs.onErrorContainer, size: 18),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       errorMessage!,
-                      style: TextStyle(color: cs.onErrorContainer, fontSize: 13),
+                      style:
+                          TextStyle(color: cs.onErrorContainer, fontSize: 13),
                     ),
                   ),
                 ],
@@ -540,7 +546,8 @@ class _ResultView extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: _confidenceColor(result.confidence).withValues(alpha: 0.15),
+              color:
+                  _confidenceColor(result.confidence).withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -726,10 +733,11 @@ class _MacroStat extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           label,
-          style: Theme.of(context)
-              .textTheme
-              .labelSmall
-              ?.copyWith(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)),
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.5)),
         ),
       ],
     );

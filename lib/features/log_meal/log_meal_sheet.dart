@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../../core/ai/gemini_service.dart';
@@ -12,25 +11,26 @@ import '../../core/providers/selected_date_provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../dashboard/providers/dashboard_provider.dart';
 import 'providers/log_meal_provider.dart';
+
 /// Shows the Gemini-style bottom sheet for logging a meal.
 Future<void> showLogMealSheet(BuildContext context, {DateTime? targetDate}) {
-  final dateParam = GoRouterState.of(context).uri.queryParameters['date'];
-  final activeTargetDate = targetDate ?? (dateParam != null ? DateTime.tryParse(dateParam) : null);
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     isDismissible: true,
     enableDrag: true,
     backgroundColor: Colors.transparent,
-    builder: (ctx) => _LogMealSheet(targetDate: activeTargetDate),
+    builder: (ctx) => _LogMealSheet(targetDate: targetDate),
   );
 }
+
 class _LogMealSheet extends ConsumerStatefulWidget {
   const _LogMealSheet({this.targetDate});
   final DateTime? targetDate;
   @override
   ConsumerState<_LogMealSheet> createState() => _LogMealSheetState();
 }
+
 class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
   final _textController = TextEditingController();
   final _focusNode = FocusNode();
@@ -64,6 +64,7 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
       _focusNode.requestFocus();
     });
   }
+
   Future<void> _loadSavedMeals() async {
     final favs = await isarService.getFavoriteMeals();
     if (mounted) {
@@ -72,16 +73,19 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
       });
     }
   }
+
   @override
   void dispose() {
     _textController.dispose();
     _focusNode.dispose();
     super.dispose();
   }
+
   Future<void> _pickImage(ImageSource source) async {
     try {
       final picker = ImagePicker();
-      final file = await picker.pickImage(source: source, maxWidth: 1024, imageQuality: 85);
+      final file = await picker.pickImage(
+          source: source, maxWidth: 1024, imageQuality: 85);
       if (file == null) return;
       final bytes = await file.readAsBytes();
       setState(() {
@@ -96,6 +100,7 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
       ));
     }
   }
+
   Future<void> _submit() async {
     HapticFeedback.lightImpact();
 
@@ -110,7 +115,8 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
     final text = _textController.text.trim();
     if (text.isEmpty && _imageBytes == null) {
       if (mounted) {
-        _showInlineSnackBar('Please describe what you ate or snap a photo to analyze. 🍛');
+        _showInlineSnackBar(
+            'Please describe what you ate or snap a photo to analyze. 🍛');
       }
       return;
     }
@@ -120,10 +126,11 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
     });
 
     await ref.read(logMealNotifierProvider.notifier).analyze(
-      text: text.isNotEmpty ? text : null,
-      imageBytes: _imageBytes,
-    );
+          text: text.isNotEmpty ? text : null,
+          imageBytes: _imageBytes,
+        );
   }
+
   void _goBackAndReset() {
     ref.read(logMealNotifierProvider.notifier).reset();
     setState(() {
@@ -134,6 +141,7 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
       }
     });
   }
+
   void _retainTextAndEdit() {
     ref.read(logMealNotifierProvider.notifier).reset();
     setState(() {
@@ -141,6 +149,7 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
       _imagePath = null;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(logMealNotifierProvider);
@@ -148,12 +157,8 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
     final mq = MediaQuery.of(context);
     final sheetHeight = mq.size.height * 0.90;
     final isSuccess = state.status == LogMealStatus.success;
-
-    final dateParam = GoRouterState.of(context).uri.queryParameters['date'];
     final selectedDate = ref.watch(selectedDateProvider);
-    final activeTargetDate = widget.targetDate ??
-        (dateParam != null ? DateTime.tryParse(dateParam) : null) ??
-        selectedDate;
+    final activeTargetDate = widget.targetDate ?? selectedDate;
 
     return PopScope(
       canPop: !isSuccess,
@@ -187,7 +192,10 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
                 children: [
                   Text(
                     'Log Meal',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleLarge
+                        ?.copyWith(fontWeight: FontWeight.w700),
                   ),
                   const Spacer(),
                   IconButton(
@@ -209,10 +217,12 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
                   color: cs.surfaceContainerHigh,
                   borderRadius: BorderRadius.circular(16),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 14),
                     child: Row(
                       children: [
-                        const Icon(Icons.restaurant_rounded, size: 20, color: Colors.amber),
+                        const Icon(Icons.restaurant_rounded,
+                            size: 20, color: Colors.amber),
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
@@ -232,29 +242,36 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
             Expanded(
               child: state.status == LogMealStatus.analyzing
                   ? _AnalyzingView()
-                  : state.status == LogMealStatus.success && state.result != null
+                  : state.status == LogMealStatus.success &&
+                          state.result != null
                       ? _ResultView(
                           result: state.result!,
                           originalInput: _textController.text,
                           imagePath: _imagePath,
                           onConfirm: () async {
-                            await ref.read(logMealNotifierProvider.notifier).saveMeal(
-                              originalInput: _textController.text,
-                              result: state.result!,
-                              imagePath: _imagePath,
-                              targetDate: activeTargetDate,
-                            );
+                            await ref
+                                .read(logMealNotifierProvider.notifier)
+                                .saveMeal(
+                                  originalInput: _textController.text,
+                                  result: state.result!,
+                                  imagePath: _imagePath,
+                                  targetDate: activeTargetDate,
+                                );
                             ref.invalidate(todaySnapshotProvider);
                             await HapticFeedback.mediumImpact();
                             if (context.mounted) {
-                              ref.read(logMealNotifierProvider.notifier).reset();
+                              ref
+                                  .read(logMealNotifierProvider.notifier)
+                                  .reset();
                               Navigator.of(context).pop();
                             }
                           },
                           onBack: _goBackAndReset,
                           onEdit: _retainTextAndEdit,
                           onResultUpdated: (updatedResult) {
-                            ref.read(logMealNotifierProvider.notifier).setResult(updatedResult);
+                            ref
+                                .read(logMealNotifierProvider.notifier)
+                                .setResult(updatedResult);
                           },
                         )
                       : _InputView(
@@ -263,18 +280,22 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
                           imageBytes: _imageBytes,
                           savedMeals: _savedMeals,
                           targetDate: activeTargetDate,
-                          errorMessage: state.status == LogMealStatus.error ? state.errorMessage : null,
+                          errorMessage: state.status == LogMealStatus.error
+                              ? state.errorMessage
+                              : null,
                           onSend: _submit,
                           onCamera: () => _pickImage(ImageSource.camera),
                           onGallery: () => _pickImage(ImageSource.gallery),
-                          onClearImage: () => setState(() => _imageBytes = null),
+                          onClearImage: () =>
+                              setState(() => _imageBytes = null),
                           onSelectSavedMeal: (meal) {
                             setState(() {
                               _isFromSavedMeal = true;
                               _imagePath = meal.imagePath;
                               if (meal.imagePath != null) {
                                 try {
-                                  _imageBytes = File(meal.imagePath!).readAsBytesSync();
+                                  _imageBytes =
+                                      File(meal.imagePath!).readAsBytesSync();
                                 } catch (_) {
                                   _imageBytes = null;
                                 }
@@ -284,13 +305,16 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
                             });
                             _textController.text = meal.originalUserInput;
                             final cachedResult = MealAnalysisResult(
-                              mealName: meal.aiInterpretation ?? meal.originalUserInput,
+                              mealName: meal.aiInterpretation ??
+                                  meal.originalUserInput,
                               confidence: 1.0,
                               needsClarification: false,
                               items: meal.items,
                               rawJson: '{"fromMemory": true}',
                             );
-                            ref.read(logMealNotifierProvider.notifier).setResult(cachedResult);
+                            ref
+                                .read(logMealNotifierProvider.notifier)
+                                .setResult(cachedResult);
                           },
                         ),
             ),
@@ -300,6 +324,7 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
     );
   }
 }
+
 enum LogMode { auto, manual }
 
 class _InputView extends ConsumerStatefulWidget {
@@ -348,8 +373,13 @@ class _InputViewState extends ConsumerState<_InputView> {
     final now = widget.targetDate ?? DateTime.now();
     _selectedDate = DateTime(now.year, now.month, now.day);
     final today = DateTime.now();
-    final isDifferentDay = _selectedDate.difference(DateTime(today.year, today.month, today.day)).inDays != 0;
-    _selectedTime = isDifferentDay ? const TimeOfDay(hour: 0, minute: 0) : TimeOfDay.fromDateTime(now);
+    final isDifferentDay = _selectedDate
+            .difference(DateTime(today.year, today.month, today.day))
+            .inDays !=
+        0;
+    _selectedTime = isDifferentDay
+        ? const TimeOfDay(hour: 0, minute: 0)
+        : TimeOfDay.fromDateTime(now);
   }
 
   @override
@@ -421,7 +451,8 @@ class _InputViewState extends ConsumerState<_InputView> {
     final cs = Theme.of(context).colorScheme;
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(24, 8, 24, MediaQuery.of(context).viewInsets.bottom + 24),
+      padding: EdgeInsets.fromLTRB(
+          24, 8, 24, MediaQuery.of(context).viewInsets.bottom + 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -453,7 +484,8 @@ class _InputViewState extends ConsumerState<_InputView> {
 
           Expanded(
             child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+              physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics()),
               child: _logMode == LogMode.auto
                   ? _buildAutoAnalyseContent(cs)
                   : _buildManualEntryContent(cs),
@@ -470,36 +502,41 @@ class _InputViewState extends ConsumerState<_InputView> {
       children: [
         Text(
           'What did you eat?',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+          style: Theme.of(context)
+              .textTheme
+              .headlineSmall
+              ?.copyWith(fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: 6),
         Text(
           'Type naturally — "one plate biryani" or "2 eggs and toast"',
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: cs.onSurface.withValues(alpha: 0.5),
-          ),
+                color: cs.onSurface.withValues(alpha: 0.5),
+              ),
         ),
         const SizedBox(height: 16),
         if (widget.savedMeals.isNotEmpty) ...[
           Text(
             'Saved Meals (Load from Memory)',
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: cs.primary,
-            ),
+                  fontWeight: FontWeight.w600,
+                  color: cs.primary,
+                ),
           ),
           const SizedBox(height: 8),
           SizedBox(
             height: 36,
             child: ListView.separated(
-              physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+              physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics()),
               scrollDirection: Axis.horizontal,
               itemCount: widget.savedMeals.length,
               separatorBuilder: (_, __) => const SizedBox(width: 8),
               itemBuilder: (ctx, i) {
                 final m = widget.savedMeals[i];
                 return ChoiceChip(
-                  label: Text('❤️ ${m.aiInterpretation ?? m.originalUserInput}'),
+                  label:
+                      Text('❤️ ${m.aiInterpretation ?? m.originalUserInput}'),
                   selected: false,
                   onSelected: (_) => widget.onSelectSavedMeal(m),
                   labelStyle: TextStyle(
@@ -545,7 +582,8 @@ class _InputViewState extends ConsumerState<_InputView> {
                             color: Colors.black26,
                             shape: const CircleBorder(),
                             child: IconButton(
-                              icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+                              icon: const Icon(Icons.arrow_back_rounded,
+                                  color: Colors.white),
                               onPressed: () => Navigator.of(ctx).pop(),
                             ),
                           ),
@@ -571,8 +609,10 @@ class _InputViewState extends ConsumerState<_InputView> {
                   onTap: widget.onClearImage,
                   child: Container(
                     padding: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(color: Colors.black54, shape: BoxShape.circle),
-                    child: const Icon(Icons.close, color: Colors.white, size: 16),
+                    decoration: const BoxDecoration(
+                        color: Colors.black54, shape: BoxShape.circle),
+                    child:
+                        const Icon(Icons.close, color: Colors.white, size: 16),
                   ),
                 ),
               ),
@@ -651,14 +691,17 @@ class _InputViewState extends ConsumerState<_InputView> {
       children: [
         Text(
           'Manual Meal Entry',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+          style: Theme.of(context)
+              .textTheme
+              .headlineSmall
+              ?.copyWith(fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: 6),
         Text(
           'Enter meal details, calories, and macros manually',
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: cs.onSurface.withValues(alpha: 0.5),
-          ),
+                color: cs.onSurface.withValues(alpha: 0.5),
+              ),
         ),
         const SizedBox(height: 16),
 
@@ -682,7 +725,8 @@ class _InputViewState extends ConsumerState<_InputView> {
                 decoration: InputDecoration(
                   labelText: 'Calories',
                   suffixText: 'kcal',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14)),
                 ),
               ),
             ),
@@ -694,7 +738,8 @@ class _InputViewState extends ConsumerState<_InputView> {
                 decoration: InputDecoration(
                   labelText: 'Protein',
                   suffixText: 'g',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14)),
                 ),
               ),
             ),
@@ -710,7 +755,8 @@ class _InputViewState extends ConsumerState<_InputView> {
                 decoration: InputDecoration(
                   labelText: 'Carbs',
                   suffixText: 'g',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14)),
                 ),
               ),
             ),
@@ -722,7 +768,8 @@ class _InputViewState extends ConsumerState<_InputView> {
                 decoration: InputDecoration(
                   labelText: 'Fat',
                   suffixText: 'g',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14)),
                 ),
               ),
             ),
@@ -749,8 +796,10 @@ class _InputViewState extends ConsumerState<_InputView> {
                 icon: const Icon(Icons.calendar_today_rounded, size: 18),
                 label: Text(DateFormat('EEE, MMM d').format(_selectedDate)),
                 style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
               ),
             ),
@@ -769,8 +818,10 @@ class _InputViewState extends ConsumerState<_InputView> {
                 icon: const Icon(Icons.access_time_rounded, size: 18),
                 label: Text(_selectedTime.format(context)),
                 style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
               ),
             ),
@@ -782,7 +833,8 @@ class _InputViewState extends ConsumerState<_InputView> {
         CheckboxListTile(
           value: _saveToMemory,
           onChanged: (v) => setState(() => _saveToMemory = v ?? false),
-          title: const Text('Save to Memory (Saved Meals)', style: TextStyle(fontSize: 14)),
+          title: const Text('Save to Memory (Saved Meals)',
+              style: TextStyle(fontSize: 14)),
           contentPadding: EdgeInsets.zero,
           controlAffinity: ListTileControlAffinity.leading,
           dense: true,
@@ -797,7 +849,8 @@ class _InputViewState extends ConsumerState<_InputView> {
             icon: const Icon(Icons.check_circle_outline_rounded),
             label: const Text('Save Meal'),
             style: FilledButton.styleFrom(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14)),
             ),
           ),
         ),
@@ -805,6 +858,7 @@ class _InputViewState extends ConsumerState<_InputView> {
     );
   }
 }
+
 class _ActionButton extends StatelessWidget {
   const _ActionButton({
     required this.icon,
@@ -827,7 +881,9 @@ class _ActionButton extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isActive ? cs.primaryContainer : cs.onSurface.withValues(alpha: 0.06),
+            color: isActive
+                ? cs.primaryContainer
+                : cs.onSurface.withValues(alpha: 0.06),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(
@@ -840,6 +896,7 @@ class _ActionButton extends StatelessWidget {
     );
   }
 }
+
 class _AnalyzingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -851,20 +908,27 @@ class _AnalyzingView extends StatelessWidget {
           const SizedBox(height: 24),
           Text(
             'Analysing your meal...',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium
+                ?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           Text(
             'AI is estimating nutrition',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
-            ),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.4),
+                ),
           ),
         ],
       ),
     );
   }
 }
+
 class _ResultView extends StatelessWidget {
   const _ResultView({
     required this.result,
@@ -885,7 +949,8 @@ class _ResultView extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final confPercent = (result.confidence * 100).toStringAsFixed(0);
     return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+      physics:
+          const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
       padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -893,13 +958,15 @@ class _ResultView extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: _confidenceColor(result.confidence).withValues(alpha: 0.15),
+              color:
+                  _confidenceColor(result.confidence).withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.auto_awesome, size: 14, color: _confidenceColor(result.confidence)),
+                Icon(Icons.auto_awesome,
+                    size: 14, color: _confidenceColor(result.confidence)),
                 const SizedBox(width: 4),
                 Text(
                   '$confPercent% confidence',
@@ -927,7 +994,10 @@ class _ResultView extends StatelessWidget {
               Expanded(
                 child: Text(
                   result.mealName,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineSmall
+                      ?.copyWith(fontWeight: FontWeight.w700),
                 ),
               ),
             ],
@@ -937,9 +1007,9 @@ class _ResultView extends StatelessWidget {
             Text(
               '"$originalInput"',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: cs.onSurface.withValues(alpha: 0.45),
-                fontStyle: FontStyle.italic,
-              ),
+                    color: cs.onSurface.withValues(alpha: 0.45),
+                    fontStyle: FontStyle.italic,
+                  ),
             ),
           ],
           const SizedBox(height: 20),
@@ -983,9 +1053,9 @@ class _ResultView extends StatelessWidget {
           Text(
             'Items (${result.items.length}) — Tap item to edit numbers',
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.w700,
-              color: cs.onSurface.withValues(alpha: 0.6),
-            ),
+                  fontWeight: FontWeight.w700,
+                  color: cs.onSurface.withValues(alpha: 0.6),
+                ),
           ),
           const SizedBox(height: 12),
           ...result.items.asMap().entries.map((entry) {
@@ -1003,7 +1073,8 @@ class _ResultView extends StatelessWidget {
             child: FilledButton(
               onPressed: onConfirm,
               style: FilledButton.styleFrom(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14)),
               ),
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -1022,7 +1093,8 @@ class _ResultView extends StatelessWidget {
             child: OutlinedButton(
               onPressed: onEdit,
               style: OutlinedButton.styleFrom(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14)),
               ),
               child: const Text('Edit / Try Again'),
             ),
@@ -1031,11 +1103,13 @@ class _ResultView extends StatelessWidget {
       ),
     );
   }
+
   void _editItemDialog(BuildContext context, int index, MealItem item) async {
     HapticFeedback.lightImpact();
     final nameCtrl = TextEditingController(text: item.name);
     final portionCtrl = TextEditingController(text: item.servingDescription);
-    final calCtrl = TextEditingController(text: item.calories.toStringAsFixed(0));
+    final calCtrl =
+        TextEditingController(text: item.calories.toStringAsFixed(0));
     final pCtrl = TextEditingController(text: item.proteinG.toStringAsFixed(0));
     final cCtrl = TextEditingController(text: item.carbsG.toStringAsFixed(0));
     final fCtrl = TextEditingController(text: item.fatG.toStringAsFixed(0));
@@ -1053,8 +1127,10 @@ class _ResultView extends StatelessWidget {
                 controller: nameCtrl,
                 decoration: InputDecoration(
                   labelText: 'Item Name',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                 ),
               ),
               const SizedBox(height: 12),
@@ -1062,8 +1138,10 @@ class _ResultView extends StatelessWidget {
                 controller: portionCtrl,
                 decoration: InputDecoration(
                   labelText: 'Serving Portion',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                 ),
               ),
               const SizedBox(height: 12),
@@ -1076,8 +1154,10 @@ class _ResultView extends StatelessWidget {
                       decoration: InputDecoration(
                         labelText: 'Calories',
                         suffixText: 'kcal',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 12),
                       ),
                     ),
                   ),
@@ -1089,8 +1169,10 @@ class _ResultView extends StatelessWidget {
                       decoration: InputDecoration(
                         labelText: 'Protein',
                         suffixText: 'g',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 12),
                       ),
                     ),
                   ),
@@ -1106,8 +1188,10 @@ class _ResultView extends StatelessWidget {
                       decoration: InputDecoration(
                         labelText: 'Carbs',
                         suffixText: 'g',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 12),
                       ),
                     ),
                   ),
@@ -1119,8 +1203,10 @@ class _ResultView extends StatelessWidget {
                       decoration: InputDecoration(
                         labelText: 'Fat',
                         suffixText: 'g',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 12),
                       ),
                     ),
                   ),
@@ -1137,7 +1223,8 @@ class _ResultView extends StatelessWidget {
                 child: OutlinedButton(
                   onPressed: () => Navigator.of(ctx).pop(false),
                   style: OutlinedButton.styleFrom(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                   child: const Text('Cancel'),
@@ -1148,7 +1235,8 @@ class _ResultView extends StatelessWidget {
                 child: FilledButton(
                   onPressed: () => Navigator.of(ctx).pop(true),
                   style: FilledButton.styleFrom(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                   child: const Text('Save'),
@@ -1180,12 +1268,14 @@ class _ResultView extends StatelessWidget {
       onResultUpdated(updatedResult);
     }
   }
+
   Color _confidenceColor(double confidence) {
     if (confidence >= 0.8) return const Color(0xFF34D399);
     if (confidence >= 0.6) return const Color(0xFFFBBF24);
     return const Color(0xFFF87171);
   }
 }
+
 class _MacroStat extends StatelessWidget {
   const _MacroStat({
     required this.label,
@@ -1202,22 +1292,28 @@ class _MacroStat extends StatelessWidget {
         Text(
           value,
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w800,
-            color: color,
-          ),
+                fontWeight: FontWeight.w800,
+                color: color,
+              ),
         ),
-        Text(unit, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: color)),
+        Text(unit,
+            style:
+                Theme.of(context).textTheme.labelSmall?.copyWith(color: color)),
         const SizedBox(height: 4),
         Text(
           label,
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-          ),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.5),
+              ),
         ),
       ],
     );
   }
 }
+
 class _ItemRow extends StatelessWidget {
   const _ItemRow({required this.item, required this.onEdit});
   final MealItem item;
@@ -1253,15 +1349,16 @@ class _ItemRow extends StatelessWidget {
                       Text(
                         '${item.servingDescription} • ${item.estimatedWeightG.toStringAsFixed(0)}g',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: cs.onSurface.withValues(alpha: 0.5),
-                        ),
+                              color: cs.onSurface.withValues(alpha: 0.5),
+                            ),
                       ),
                     ],
                   ),
                 ),
                 Text(
                   '${item.calories.toStringAsFixed(0)} kcal',
-                  style: TextStyle(fontWeight: FontWeight.w700, color: cs.primary),
+                  style:
+                      TextStyle(fontWeight: FontWeight.w700, color: cs.primary),
                 ),
               ],
             ),

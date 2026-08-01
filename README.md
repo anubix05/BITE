@@ -2,143 +2,138 @@
   <img src="assets/images/splash_logo_light.png" alt="Bite App Logo" width="200" />
 </p>
 
-# Bite 🍽️
+# Bite
 
-> **"Describe what you ate. Let the AI do the rest."**
+> Describe what you ate. Let the AI do the rest.
 
-Bite is a modern, privacy-first, AI-powered nutrition and meal tracking application built with Flutter. It replaces tedious form-filling with natural language understanding and photo recognition—powered locally with offline-first storage and Google Gemini AI.
+Bite is a privacy-first Flutter meal tracker that turns natural language, photos, and optional voice input into structured meal logs. It is built to feel fast, calm, and low-friction while keeping all user data local with Isar.
 
----
+## What It Does
 
-## 🌟 Key Features
+Bite focuses on four main experiences:
 
-- 🗣️ **Natural Language Logging**: Type naturally like *"One plate chicken biryani"*, *"2 eggs and toast"*, or *"Half bowl oats"*.
-- 📸 **Photo & Multimodal Analysis**: Take a photo of your meal with optional context (*"Extra chicken, less rice"*) and let Gemini AI estimate nutrition & portions.
-- 🧠 **Smart Meal Memory**: Favorite and save frequently eaten meals to log them with a single tap.
-- 📊 **Real-time Dashboard & Macro Snapshot**: Instant visual feedback on daily calories, protein, carbs, and fat with animated progress indicators.
-- 📅 **Google Calendar Style Month Slider**: Smooth, real-time horizontal page swiping across months with haptic feedback and automatic selected-date focusing.
-- 📈 **Detailed Analytics & History**: Interactive 7-day, 4-week, and 3-month charts built with `fl_chart`, full text search, and chronological timeline view.
-- 🔒 **Privacy & Offline First**: 100% of your meal history, settings, and photos stay on your device via **Isar DB**. Only individual meal inputs are processed by AI.
-- 💾 **Full ZIP Backup & Smart Deduplicating Import**: Export your complete data to a ZIP file using Android's native File Saver menu. Smart deduplication overwrites matching meals while preserving app-only data.
-- 🎨 **Material 3 Expressive UI**: Supports Light Mode, Dark Mode, System Theme, and custom color accents.
+- Natural language meal logging like “one plate chicken biryani” or “2 eggs and toast”.
+- Photo-based meal analysis with optional extra context.
+- Daily nutrition tracking with calories and macro snapshots.
+- Local history, analytics, calendar review, backup, and restore.
 
----
+The app saves the original user input alongside the AI interpretation so edits can always be compared against the source text later.
 
-## 📸 Core UX Philosophy
+## Verified Features
 
-Logging a meal in Bite takes **under 5 seconds**:
+- Meal logging with text, photo, and photo-plus-description input.
+- Gemini-based meal interpretation, portion estimation, and nutrition estimation.
+- Low-confidence follow-up handling before saving AI output.
+- Dashboard with today’s calories, remaining calories, protein, carbs, fat, and meal timeline.
+- History screen with searchable logs and analytics tabs.
+- Calendar month navigation with day-status coloring and drill-in to a selected day.
+- Meal detail editing for values, date/time, favorites, deletion, and re-analysis.
+- Onboarding for personal info, goals, permissions, and optional Gemini key setup.
+- Settings for goals, personal info, theme, custom color, reminders, saved meals, backup/restore, and Gemini API key.
+- ZIP export and import containing meals, settings, version metadata, and images.
+- Local-first storage with Isar and no cloud meal database.
 
-1. **Tap Log Meal** (or press Photo shortcut).
-2. **Describe your meal** in natural words.
-3. **Confirm AI estimates**—edit any portion or nutrient value if desired.
+## Tech Stack
 
----
+| Area | Stack |
+|---|---|
+| UI | Flutter, Material 3, Google Fonts, Dynamic Color |
+| State | Riverpod |
+| Navigation | GoRouter |
+| Storage | Isar |
+| AI | Google Gemini |
+| Charts | fl_chart |
+| Media | image_picker, flutter_svg, image compression utilities |
+| Backup | archive, file_picker, share_plus |
 
-## 🛠️ Tech Stack
+## Project Structure
 
-| Component | Technology | Description |
-|---|---|---|
-| **Framework** | **Flutter 3.44+** | Cross-platform UI engine |
-| **Language** | **Dart 3.3+** | Strongly typed client code |
-| **State Management** | **Flutter Riverpod 2.6** | Reactive state with code generation |
-| **Navigation** | **GoRouter 14.6** | Declarative router with deep linking |
-| **Database** | **Isar DB 3.1** | Ultra-fast, offline-first NoSQL database |
-| **AI Intelligence** | **Google Gemini 2.5 Flash** | Structured JSON food & portion estimation |
-| **Analytics & Charts** | **fl_chart** | High-performance interactive Flutter charts |
-| **Design System** | **Material 3** | Adaptive dynamic color & micro-animations |
+The codebase follows a feature-first layout:
 
----
-
-## 📂 Project Architecture
-
-The project uses a **Feature-first** modular architecture following SOLID principles:
-
-```
+```text
 lib/
-├── app.dart                   # Root MaterialApp configuration
-├── main.dart                  # Entry point & service initialization
-├── core/                      # Core infrastructure & shared utilities
-│   ├── ai/                    # Gemini AI service integration
-│   ├── database/              # Isar database service & schemas
-│   ├── models/                # Meal, MealItem, AppSettings schemas
-│   ├── providers/             # Global date & app state providers
-│   ├── router/                # GoRouter navigation setup
-│   ├── services/              # Backup & Notification services
-│   ├── theme/                 # AppTheme & color schemes
-│   └── widgets/               # Expressive sliders, macro rings, shell scaffold
-└── features/                  # Independent feature modules
-    ├── analytics/             # Weekly, monthly, macro trend charts
-    ├── calendar/              # Google Calendar style month slider
-    ├── dashboard/             # Home view, nutrition snapshot, timeline
-    ├── history/               # Chronological journal & meal search
-    ├── log_meal/              # Text & photo logging sheet
-    ├── meal_detail/           # Detail view & meal editor
-    ├── onboarding/            # Initial nutrition goals setup
-    └── settings/              # Custom colors, goals, backup/restore, API key
+├── app.dart
+├── main.dart
+├── core/
+│   ├── ai/
+│   ├── database/
+│   ├── models/
+│   ├── router/
+│   ├── services/
+│   ├── theme/
+│   └── widgets/
+└── features/
+    ├── analytics/
+    ├── calendar/
+    ├── dashboard/
+    ├── history/
+    ├── log_meal/
+    ├── meal_detail/
+    ├── onboarding/
+    └── settings/
 ```
 
----
-
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
-- [Flutter SDK](https://docs.flutter.dev/get-started/install) (`>= 3.3.0`)
-- Android Studio / VS Code with Flutter extension
-- A free Gemini API Key from [Google AI Studio](https://aistudio.google.com)
+- Flutter SDK 3.3 or newer
+- Android Studio or VS Code with Flutter tooling
+- A Gemini API key from Google AI Studio if you want AI meal parsing
 
-### Installation
+### Setup
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/anubix05/BITE.git
-   cd BITE
-   ```
-
-2. **Configure Environment API Key**:
-   Create a `.env` file in the project root:
-   ```env
-   GEMINI_API_KEY=your_gemini_api_key_here
-   ```
-   *(Note: You can also enter or update your Gemini API Key directly inside the app's Settings screen).*
-
-3. **Install Dependencies & Generate Code**:
+1. Install dependencies.
    ```bash
    flutter pub get
+   ```
+
+2. Generate code.
+   ```bash
    dart run build_runner build --delete-conflicting-outputs
    ```
 
-4. **Run the App**:
+3. Optionally add a `.env` file in the project root.
+   ```env
+   GEMINI_API_KEY=your_gemini_api_key_here
+   ```
+
+4. Launch the app.
    ```bash
    flutter run
    ```
 
----
+On Windows, `run.ps1` is also available for the Android workflow used in this workspace.
 
-## 📦 Building Production Release
+## Testing
 
-To build optimized, split-per-ABI release APKs:
+Run the test suite with:
+
+```bash
+flutter test
+```
+
+The repository includes coverage for routing, onboarding, nutrition calculations, meal tracking, calendar status logic, backup import/export, settings migration, and widget screens.
+
+## Build
+
+Build a release APK with:
 
 ```bash
 flutter build apk --release --split-per-abi
 ```
 
-Generated APKs will be located at:
-`build/app/outputs/flutter-apk/app-arm64-v8a-release.apk` (~21 MB)
+## Privacy
 
----
+- Meals, settings, goals, and photos are stored locally on the device.
+- The app does not use a cloud meal database.
+- AI processing only receives the meal content needed for analysis.
+- Users can export or restore their data through ZIP backup.
 
-## 🔒 Privacy & Data Ownership
+## Current Version
 
-- **Local Data Storage**: All your meals, nutritional data, personal settings, and photos are stored strictly on your device using Isar DB.
-- **Zero Cloud Tracking**: No user data, analytics, or meal history is ever uploaded to external servers.
-- **Data Export & Portability**: You own your data. Export your entire history anytime to a standard ZIP backup (`meals.json`, `settings.json`, and images).
+Version: 3.0.2+35
 
----
+## License
 
-## 📄 Version & License
-
-- **Current Version**: `v2.0.2`
-- **License**: Open Source / Personal Use
-
-Developed with ❤️ using Flutter & Google Gemini AI.
+Open source for personal use.
