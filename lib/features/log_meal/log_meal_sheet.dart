@@ -123,7 +123,7 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
       imageBytes: _imageBytes,
     );
   }
-  void _retainTextAndEdit() {
+  void _goBackAndReset() {
     ref.read(logMealNotifierProvider.notifier).reset();
     setState(() {
       _imageBytes = null;
@@ -131,6 +131,13 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
       if (_isFromSavedMeal) {
         _textController.clear();
       }
+    });
+  }
+  void _retainTextAndEdit() {
+    ref.read(logMealNotifierProvider.notifier).reset();
+    setState(() {
+      _imageBytes = null;
+      _imagePath = null;
     });
   }
   @override
@@ -145,7 +152,7 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
       canPop: !isSuccess,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
-        _retainTextAndEdit();
+        _goBackAndReset();
       },
       child: Container(
         height: sheetHeight,
@@ -237,6 +244,7 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
                               Navigator.of(context).pop();
                             }
                           },
+                          onBack: _goBackAndReset,
                           onEdit: _retainTextAndEdit,
                           onResultUpdated: (updatedResult) {
                             ref.read(logMealNotifierProvider.notifier).setResult(updatedResult);
@@ -854,13 +862,14 @@ class _ResultView extends StatelessWidget {
     required this.originalInput,
     required this.imagePath,
     required this.onConfirm,
+    required this.onBack,
     required this.onEdit,
     required this.onResultUpdated,
   });
   final MealAnalysisResult result;
   final String originalInput;
   final String? imagePath;
-  final VoidCallback onConfirm, onEdit;
+  final VoidCallback onConfirm, onBack, onEdit;
   final ValueChanged<MealAnalysisResult> onResultUpdated;
   @override
   Widget build(BuildContext context) {
@@ -900,7 +909,7 @@ class _ResultView extends StatelessWidget {
             children: [
               IconButton(
                 icon: const Icon(Icons.arrow_back_rounded),
-                onPressed: onEdit,
+                onPressed: onBack,
                 tooltip: 'Back to input',
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
