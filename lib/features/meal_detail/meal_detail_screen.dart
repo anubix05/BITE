@@ -492,13 +492,48 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
             // Image
             if (meal.imagePath != null) ...[
               const SizedBox(height: 16),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Image.file(
-                  File(meal.imagePath!),
-                  height: 200,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
+              GestureDetector(
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  showDialog(
+                    context: context,
+                    barrierColor: Colors.black.withValues(alpha: 0.9),
+                    builder: (ctx) => Stack(
+                      children: [
+                        Center(
+                          child: InteractiveViewer(
+                            minScale: 0.5,
+                            maxScale: 4.0,
+                            child: Image.file(
+                              File(meal.imagePath!),
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 40,
+                          left: 20,
+                          child: Material(
+                            color: Colors.black26,
+                            shape: const CircleBorder(),
+                            child: IconButton(
+                              icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+                              onPressed: () => Navigator.of(ctx).pop(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.file(
+                    File(meal.imagePath!),
+                    height: 200,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ],

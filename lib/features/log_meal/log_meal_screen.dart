@@ -302,13 +302,48 @@ class _InputView extends StatelessWidget {
           if (imageBytes != null) ...[
             Stack(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: Image.memory(
-                    Uint8List.fromList(imageBytes!),
-                    height: 140,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
+                GestureDetector(
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    showDialog(
+                      context: context,
+                      barrierColor: Colors.black.withValues(alpha: 0.9),
+                      builder: (ctx) => Stack(
+                        children: [
+                          Center(
+                            child: InteractiveViewer(
+                              minScale: 0.5,
+                              maxScale: 4.0,
+                              child: Image.memory(
+                                Uint8List.fromList(imageBytes!),
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 40,
+                            left: 20,
+                            child: Material(
+                              color: Colors.black26,
+                              shape: const CircleBorder(),
+                              child: IconButton(
+                                icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+                                onPressed: () => Navigator.of(ctx).pop(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.memory(
+                      Uint8List.fromList(imageBytes!),
+                      height: 140,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 Positioned(

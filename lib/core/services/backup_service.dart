@@ -316,7 +316,7 @@ class BackupService {
 
     final origPath = m['imagePath'] as String?;
     if (origPath != null) {
-      final filename = origPath.split(Platform.pathSeparator).last;
+      final filename = origPath.split(RegExp(r'[/\\]')).last;
       meal.imagePath = '$imagesDir/$filename';
     }
     return meal;

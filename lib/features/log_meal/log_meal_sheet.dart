@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -255,6 +256,16 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
                           onSelectSavedMeal: (meal) {
                             setState(() {
                               _isFromSavedMeal = true;
+                              _imagePath = meal.imagePath;
+                              if (meal.imagePath != null) {
+                                try {
+                                  _imageBytes = File(meal.imagePath!).readAsBytesSync();
+                                } catch (_) {
+                                  _imageBytes = null;
+                                }
+                              } else {
+                                _imageBytes = null;
+                              }
                             });
                             _textController.text = meal.originalUserInput;
                             final cachedResult = MealAnalysisResult(
@@ -492,13 +503,48 @@ class _InputViewState extends ConsumerState<_InputView> {
         if (widget.imageBytes != null) ...[
           Stack(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Image.memory(
-                  Uint8List.fromList(widget.imageBytes!),
-                  height: 140,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
+              GestureDetector(
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  showDialog(
+                    context: context,
+                    barrierColor: Colors.black.withValues(alpha: 0.9),
+                    builder: (ctx) => Stack(
+                      children: [
+                        Center(
+                          child: InteractiveViewer(
+                            minScale: 0.5,
+                            maxScale: 4.0,
+                            child: Image.memory(
+                              Uint8List.fromList(widget.imageBytes!),
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 40,
+                          left: 20,
+                          child: Material(
+                            color: Colors.black26,
+                            shape: const CircleBorder(),
+                            child: IconButton(
+                              icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+                              onPressed: () => Navigator.of(ctx).pop(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.memory(
+                    Uint8List.fromList(widget.imageBytes!),
+                    height: 140,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               Positioned(
