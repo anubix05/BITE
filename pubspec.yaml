@@ -1,7 +1,7 @@
 name: bite
 description: AI-powered meal tracker — describe what you ate, let the AI do the rest.
 publish_to: 'none'
-version: 3.0.0+33
+version: 3.0.2+35
 
 environment:
   sdk: '>=3.3.0 <4.0.0'

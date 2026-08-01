@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/database/isar_service.dart';
 import '../../../core/models/app_settings.dart';
+import '../../../core/services/notification_service.dart';
 import 'package:flutter/material.dart';
 
 part 'settings_provider.g.dart';
@@ -98,5 +99,14 @@ class SettingsNotifier extends _$SettingsNotifier {
     await isarService.saveSettings(current);
     ref.invalidate(appSettingsProvider);
     ref.invalidateSelf();
+  }
+
+  Future<void> setMealRemindersEnabled(bool enabled) async {
+    final current = await future;
+    current.mealRemindersEnabled = enabled;
+    await isarService.saveSettings(current);
+    ref.invalidate(appSettingsProvider);
+    ref.invalidateSelf();
+    await NotificationService.instance.updateSchedule();
   }
 }

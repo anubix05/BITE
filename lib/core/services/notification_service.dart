@@ -63,6 +63,13 @@ class NotificationService {
     if (!_isInitialized) return;
 
     try {
+      final settings = await isarService.getSettings();
+      if (settings == null || !settings.mealRemindersEnabled) {
+        await _notifications.cancel(_morningReminderId);
+        await _notifications.cancel(_inactivityReminderId);
+        return;
+      }
+
       final now = DateTime.now();
       final todayMeals = await isarService.getMealsForDate(now);
 

@@ -20,7 +20,7 @@ final appSettingsProvider = AutoDisposeFutureProvider<AppSettings?>.internal(
 );
 
 typedef AppSettingsRef = AutoDisposeFutureProviderRef<AppSettings?>;
-String _$settingsNotifierHash() => r'1fb8d4dd95a2d0d7a36138eef79de124a8851585';
+String _$settingsNotifierHash() => r'8cfaad8f0f84f281d26d87ae4abb44b19f7ac87a';
 
 /// See also [SettingsNotifier].
 @ProviderFor(SettingsNotifier)

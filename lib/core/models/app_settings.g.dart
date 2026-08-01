@@ -82,33 +82,38 @@ const AppSettingsSchema = CollectionSchema(
       name: r'isMaterial3Expressive',
       type: IsarType.bool,
     ),
-    r'onboardingComplete': PropertySchema(
+    r'mealRemindersEnabled': PropertySchema(
       id: 13,
+      name: r'mealRemindersEnabled',
+      type: IsarType.bool,
+    ),
+    r'onboardingComplete': PropertySchema(
+      id: 14,
       name: r'onboardingComplete',
       type: IsarType.bool,
     ),
     r'targetWeightKg': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'targetWeightKg',
       type: IsarType.double,
     ),
     r'themeModeIndex': PropertySchema(
-      id: 15,
+      id: 16,
       name: r'themeModeIndex',
       type: IsarType.long,
     ),
     r'useMetric': PropertySchema(
-      id: 16,
+      id: 17,
       name: r'useMetric',
       type: IsarType.bool,
     ),
     r'weeklyRateKg': PropertySchema(
-      id: 17,
+      id: 18,
       name: r'weeklyRateKg',
       type: IsarType.double,
     ),
     r'weightKg': PropertySchema(
-      id: 18,
+      id: 19,
       name: r'weightKg',
       type: IsarType.double,
     )
@@ -163,12 +168,13 @@ void _appSettingsSerialize(
   writer.writeDouble(offsets[10], object.heightCm);
   writer.writeLong(offsets[11], object.imageQuality);
   writer.writeBool(offsets[12], object.isMaterial3Expressive);
-  writer.writeBool(offsets[13], object.onboardingComplete);
-  writer.writeDouble(offsets[14], object.targetWeightKg);
-  writer.writeLong(offsets[15], object.themeModeIndex);
-  writer.writeBool(offsets[16], object.useMetric);
-  writer.writeDouble(offsets[17], object.weeklyRateKg);
-  writer.writeDouble(offsets[18], object.weightKg);
+  writer.writeBool(offsets[13], object.mealRemindersEnabled);
+  writer.writeBool(offsets[14], object.onboardingComplete);
+  writer.writeDouble(offsets[15], object.targetWeightKg);
+  writer.writeLong(offsets[16], object.themeModeIndex);
+  writer.writeBool(offsets[17], object.useMetric);
+  writer.writeDouble(offsets[18], object.weeklyRateKg);
+  writer.writeDouble(offsets[19], object.weightKg);
 }
 
 AppSettings _appSettingsDeserialize(
@@ -192,12 +198,13 @@ AppSettings _appSettingsDeserialize(
   object.id = id;
   object.imageQuality = reader.readLong(offsets[11]);
   object.isMaterial3Expressive = reader.readBool(offsets[12]);
-  object.onboardingComplete = reader.readBool(offsets[13]);
-  object.targetWeightKg = reader.readDouble(offsets[14]);
-  object.themeModeIndex = reader.readLong(offsets[15]);
-  object.useMetric = reader.readBool(offsets[16]);
-  object.weeklyRateKg = reader.readDouble(offsets[17]);
-  object.weightKg = reader.readDouble(offsets[18]);
+  object.mealRemindersEnabled = reader.readBool(offsets[13]);
+  object.onboardingComplete = reader.readBool(offsets[14]);
+  object.targetWeightKg = reader.readDouble(offsets[15]);
+  object.themeModeIndex = reader.readLong(offsets[16]);
+  object.useMetric = reader.readBool(offsets[17]);
+  object.weeklyRateKg = reader.readDouble(offsets[18]);
+  object.weightKg = reader.readDouble(offsets[19]);
   return object;
 }
 
@@ -237,14 +244,16 @@ P _appSettingsDeserializeProp<P>(
     case 13:
       return (reader.readBool(offset)) as P;
     case 14:
-      return (reader.readDouble(offset)) as P;
-    case 15:
-      return (reader.readLong(offset)) as P;
-    case 16:
       return (reader.readBool(offset)) as P;
-    case 17:
+    case 15:
       return (reader.readDouble(offset)) as P;
+    case 16:
+      return (reader.readLong(offset)) as P;
+    case 17:
+      return (reader.readBool(offset)) as P;
     case 18:
+      return (reader.readDouble(offset)) as P;
+    case 19:
       return (reader.readDouble(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1381,6 +1390,16 @@ extension AppSettingsQueryFilter
   }
 
   QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      mealRemindersEnabledEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'mealRemindersEnabled',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
       onboardingCompleteEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -1830,6 +1849,20 @@ extension AppSettingsQuerySortBy
   }
 
   QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      sortByMealRemindersEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'mealRemindersEnabled', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      sortByMealRemindersEnabledDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'mealRemindersEnabled', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
       sortByOnboardingComplete() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'onboardingComplete', Sort.asc);
@@ -2090,6 +2123,20 @@ extension AppSettingsQuerySortThenBy
   }
 
   QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      thenByMealRemindersEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'mealRemindersEnabled', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      thenByMealRemindersEnabledDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'mealRemindersEnabled', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
       thenByOnboardingComplete() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'onboardingComplete', Sort.asc);
@@ -2256,6 +2303,13 @@ extension AppSettingsQueryWhereDistinct
   }
 
   QueryBuilder<AppSettings, AppSettings, QDistinct>
+      distinctByMealRemindersEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'mealRemindersEnabled');
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QDistinct>
       distinctByOnboardingComplete() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'onboardingComplete');
@@ -2380,6 +2434,13 @@ extension AppSettingsQueryProperty
       isMaterial3ExpressiveProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isMaterial3Expressive');
+    });
+  }
+
+  QueryBuilder<AppSettings, bool, QQueryOperations>
+      mealRemindersEnabledProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'mealRemindersEnabled');
     });
   }
 

@@ -193,6 +193,17 @@ class SettingsScreen extends ConsumerWidget {
 
                   const SizedBox(height: 8),
 
+                  // ── Notifications ──
+                  _SectionHeader('Notifications'),
+                  _ReminderTile(
+                    enabled: settings.mealRemindersEnabled,
+                    onChanged: (v) => ref
+                        .read(settingsNotifierProvider.notifier)
+                        .setMealRemindersEnabled(v),
+                  ),
+
+                  const SizedBox(height: 8),
+
                   // ── AI Settings ──
                   _SectionHeader('AI Settings'),
                   _ApiKeyTile(
@@ -209,7 +220,7 @@ class SettingsScreen extends ConsumerWidget {
                   ListTile(
                     leading: const Icon(Icons.info_outline_rounded),
                     title: const Text('Bite'),
-                    subtitle: const Text('v2.0.2 • AI-powered meal tracker'),
+                    subtitle: const Text('v3.0.2 • AI-powered meal tracker'),
                   ),
                   const SizedBox(height: 40),
                 ]),
@@ -636,6 +647,95 @@ class _CustomColorSelectorTile extends StatelessWidget {
                     ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ReminderTile extends StatelessWidget {
+  const _ReminderTile({
+    required this.enabled,
+    required this.onChanged,
+  });
+
+  final bool enabled;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeInOutCubic,
+        decoration: BoxDecoration(
+          color: cs.primary.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+          child: InkWell(
+            onTap: () {
+              HapticFeedback.lightImpact();
+              onChanged(!enabled);
+            },
+            borderRadius: BorderRadius.circular(16),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 350),
+                    curve: Curves.easeInOutCubic,
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      color: cs.primary.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      enabled ? Icons.notifications_active_rounded : Icons.notifications_off_rounded,
+                      color: cs.primary,
+                      size: 22,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Meal Reminders',
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Remind me to log meals if I forget',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: cs.onSurface.withValues(alpha: 0.55),
+                                fontSize: 12.5,
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Switch(
+                    value: enabled,
+                    onChanged: (v) {
+                      HapticFeedback.lightImpact();
+                      onChanged(v);
+                    },
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),

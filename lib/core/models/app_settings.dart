@@ -41,6 +41,9 @@ class AppSettings {
 
   // Onboarding complete
   bool onboardingComplete = false;
+
+  // Meal Reminders
+  bool mealRemindersEnabled = true;
 }
 
 /// Helper to convert stored int back to ThemeMode.
