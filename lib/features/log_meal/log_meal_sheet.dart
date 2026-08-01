@@ -35,6 +35,23 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
   List<int>? _imageBytes;
   String? _imagePath;
   List<Meal> _savedMeals = [];
+  String? _inlineSnackBarMessage;
+
+  void _showInlineSnackBar(String message) {
+    setState(() {
+      _inlineSnackBarMessage = message;
+    });
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        setState(() {
+          if (_inlineSnackBarMessage == message) {
+            _inlineSnackBarMessage = null;
+          }
+        });
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -90,12 +107,7 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
     final text = _textController.text.trim();
     if (text.isEmpty && _imageBytes == null) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please describe what you ate or snap a photo to analyze. 🍛'),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        _showInlineSnackBar('Please describe what you ate or snap a photo to analyze. 🍛');
       }
       return;
     }
@@ -218,6 +230,34 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
                           },
                         ),
             ),
+            if (_inlineSnackBarMessage != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                child: Material(
+                  elevation: 6,
+                  color: cs.surfaceContainerHigh,
+                  borderRadius: BorderRadius.circular(16),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.restaurant_rounded, size: 20, color: Colors.amber),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            _inlineSnackBarMessage!,
+                            style: TextStyle(
+                              color: cs.onSurface,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
