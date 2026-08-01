@@ -236,6 +236,19 @@ class AppTheme {
         color: colorScheme.onSurface.withValues(alpha: 0.08),
         thickness: 1,
       ),
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: isDark ? cardDark : colorScheme.surfaceContainerHighest,
+        contentTextStyle: GoogleFonts.inter(
+          color: colorScheme.onSurface,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        behavior: SnackBarBehavior.floating,
+        elevation: 4,
+      ),
     );
   }
 }
