@@ -115,7 +115,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
     final dateParam = GoRouterState.of(context).uri.queryParameters['date'];
     if (dateParam != null) {
       final parsed = DateTime.tryParse(dateParam);
-      if (parsed != null) {
+      if (parsed != null && !isSameDay(parsed, ref.read(selectedDateProvider))) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           ref.read(selectedDateProvider.notifier).selectDate(parsed);
         });
@@ -171,6 +171,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                       TodayCalendarIconButton(
                         onPressed: () {
                           ref.read(selectedDateProvider.notifier).resetToToday();
+                          context.goNamed('history');
                         },
                       ),
                     IconButton(

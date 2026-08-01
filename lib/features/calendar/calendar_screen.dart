@@ -173,6 +173,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                         final now = DateTime.now();
                         _animateToMonth(now);
                         setState(() => _focusedMonth = DateTime(now.year, now.month, 1));
+                        context.goNamed('calendar');
                       },
                     ),
                   IconButton(
