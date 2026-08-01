@@ -704,9 +704,9 @@ class _ApiKeyTileState extends State<_ApiKeyTile> {
       leading: const Icon(Icons.key_rounded),
       title: const Text('Gemini API Key'),
       subtitle: Text(
-        widget.currentKey != null
+        widget.currentKey != null && widget.currentKey!.trim().isNotEmpty
             ? '••••••••••${widget.currentKey!.length > 8 ? widget.currentKey!.substring(widget.currentKey!.length - 4) : ''}'
-            : 'Using .env key',
+            : 'Not configured (Tap to set)',
       ),
       trailing: const Icon(Icons.edit_outlined),
       onTap: () async {

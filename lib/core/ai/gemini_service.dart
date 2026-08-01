@@ -315,19 +315,47 @@ Future<void> showApiKeyMissingDialog(BuildContext context) {
         'The Gemini API key has not been configured.\n\nPlease add your Gemini API key in Settings -> AI Settings to use AI features like natural language parsing and photo analysis.\n\nYou can also log meals manually without an API key.',
         textAlign: TextAlign.center,
       ),
-      actionsAlignment: MainAxisAlignment.spaceEvenly,
+      actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.of(ctx).pop(),
-          child: const Text('Cancel'),
-        ),
-        FilledButton.icon(
-          onPressed: () {
-            Navigator.of(ctx).pop();
-            context.pushNamed('settings');
-          },
-          icon: const Icon(Icons.settings_rounded, size: 18),
-          label: const Text('Add API Key'),
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                style: OutlinedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  side: BorderSide(
+                    color: Theme.of(ctx)
+                        .colorScheme
+                        .outline
+                        .withValues(alpha: 0.3),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+                child: const Text('Cancel'),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: FilledButton(
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                  context.pushNamed('settings');
+                },
+                style: FilledButton.styleFrom(
+                  backgroundColor: Theme.of(ctx).colorScheme.primary,
+                  foregroundColor: Theme.of(ctx).colorScheme.onPrimary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+                child: const Text('Add API Key'),
+              ),
+            ),
+          ],
         ),
       ],
     ),
