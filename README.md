@@ -138,7 +138,7 @@ Generated APKs will be located at:
 
 ## 📄 Version & License
 
-- **Current Version**: `v2.0.0`
+- **Current Version**: `v2.0.2`
 - **License**: Open Source / Personal Use
 
 Developed with ❤️ using Flutter & Google Gemini AI.
