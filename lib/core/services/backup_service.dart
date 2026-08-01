@@ -26,7 +26,7 @@ class BackupService {
       final mealsJson = jsonEncode(meals.map(_mealToMap).toList());
       final settingsJson = jsonEncode(_settingsToMap(settings));
       final versionJson = jsonEncode({
-        'version': '2.0.0',
+        'version': '1.3.1',
         'exportedAt': DateTime.now().toIso8601String(),
       });
 
