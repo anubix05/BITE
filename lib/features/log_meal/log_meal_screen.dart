@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../core/ai/gemini_service.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/models/meal.dart';
+import '../../core/providers/selected_date_provider.dart';
 import '../dashboard/providers/dashboard_provider.dart';
 import 'providers/log_meal_provider.dart';
 
@@ -207,7 +208,8 @@ class _LogMealScreenState extends ConsumerState<LogMealScreen> {
                           imagePath: _imagePath,
                           onConfirm: () async {
                             final dateParam = GoRouterState.of(context).uri.queryParameters['date'];
-                            final targetDate = dateParam != null ? DateTime.tryParse(dateParam) : null;
+                            final selectedDate = ref.watch(selectedDateProvider);
+                            final targetDate = (dateParam != null ? DateTime.tryParse(dateParam) : null) ?? selectedDate;
                             await ref
                                 .read(logMealNotifierProvider.notifier)
                                 .saveMeal(

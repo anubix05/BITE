@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import '../../core/ai/gemini_service.dart';
 import '../../core/database/isar_service.dart';
 import '../../core/models/meal.dart';
+import '../../core/providers/selected_date_provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../dashboard/providers/dashboard_provider.dart';
 import 'providers/log_meal_provider.dart';
@@ -148,6 +149,12 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
     final sheetHeight = mq.size.height * 0.90;
     final isSuccess = state.status == LogMealStatus.success;
 
+    final dateParam = GoRouterState.of(context).uri.queryParameters['date'];
+    final selectedDate = ref.watch(selectedDateProvider);
+    final activeTargetDate = widget.targetDate ??
+        (dateParam != null ? DateTime.tryParse(dateParam) : null) ??
+        selectedDate;
+
     return PopScope(
       canPop: !isSuccess,
       onPopInvokedWithResult: (didPop, result) {
@@ -235,7 +242,7 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
                               originalInput: _textController.text,
                               result: state.result!,
                               imagePath: _imagePath,
-                              targetDate: widget.targetDate,
+                              targetDate: activeTargetDate,
                             );
                             ref.invalidate(todaySnapshotProvider);
                             await HapticFeedback.mediumImpact();
@@ -255,7 +262,7 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
                           focusNode: _focusNode,
                           imageBytes: _imageBytes,
                           savedMeals: _savedMeals,
-                          targetDate: widget.targetDate,
+                          targetDate: activeTargetDate,
                           errorMessage: state.status == LogMealStatus.error ? state.errorMessage : null,
                           onSend: _submit,
                           onCamera: () => _pickImage(ImageSource.camera),
