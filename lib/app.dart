@@ -28,6 +28,7 @@ class BiteApp extends ConsumerWidget {
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) {
         return MaterialApp.router(
+          scaffoldMessengerKey: scaffoldMessengerKey,
           title: 'Bite',
           debugShowCheckedModeBanner: false,
           theme: AppTheme.light(
@@ -42,6 +43,15 @@ class BiteApp extends ConsumerWidget {
           themeAnimationDuration: const Duration(milliseconds: 250),
           themeAnimationCurve: Curves.easeInOutCubic,
           routerConfig: router,
+          builder: (context, child) {
+            return Listener(
+              behavior: HitTestBehavior.translucent,
+              onPointerDown: (_) {
+                scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
+              },
+              child: child ?? const SizedBox(),
+            );
+          },
         );
       },
     );

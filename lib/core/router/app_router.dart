@@ -23,6 +23,34 @@ class _RouterRefreshNotifier extends ChangeNotifier {
   }
 }
 
+final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+
+class SnackBarClearingObserver extends NavigatorObserver {
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didPush(route, previousRoute);
+    scaffoldMessengerKey.currentState?.clearSnackBars();
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didPop(route, previousRoute);
+    scaffoldMessengerKey.currentState?.clearSnackBars();
+  }
+
+  @override
+  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didRemove(route, previousRoute);
+    scaffoldMessengerKey.currentState?.clearSnackBars();
+  }
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
+    scaffoldMessengerKey.currentState?.clearSnackBars();
+  }
+}
+
 @riverpod
 GoRouter appRouter(Ref ref) {
   final refreshNotifier = _RouterRefreshNotifier(ref);
@@ -31,6 +59,7 @@ GoRouter appRouter(Ref ref) {
     initialLocation: '/',
     refreshListenable: refreshNotifier,
     debugLogDiagnostics: false,
+    observers: [SnackBarClearingObserver()],
     redirect: (context, state) {
       final settings = ref.read(settingsNotifierProvider).valueOrNull;
       if (settings != null && !settings.onboardingComplete) {
