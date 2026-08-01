@@ -310,6 +310,7 @@ Future<void> showApiKeyMissingDialog(BuildContext context) {
 
   return showDialog<void>(
     context: context,
+    useRootNavigator: true,
     builder: (ctx) => AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       icon: const Icon(Icons.key_off_rounded, size: 36, color: Colors.amber),
