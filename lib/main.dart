@@ -14,8 +14,10 @@ import 'core/services/notification_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load env
-  await dotenv.load(fileName: '.env');
+  // Optional load env
+  try {
+    await dotenv.load(fileName: '.env', isOptional: true);
+  } catch (_) {}
 
   // Lock to portrait
   await SystemChrome.setPreferredOrientations([

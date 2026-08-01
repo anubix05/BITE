@@ -80,6 +80,15 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
     final text = _textController.text.trim();
     if (text.isEmpty && _imageBytes == null) return;
     HapticFeedback.lightImpact();
+
+    final hasKey = await GeminiService.instance.hasApiKey();
+    if (!hasKey) {
+      if (mounted) {
+        await showApiKeyMissingDialog(context);
+      }
+      return;
+    }
+
     await ref.read(logMealNotifierProvider.notifier).analyze(
       text: text.isNotEmpty ? text : null,
       imageBytes: _imageBytes,

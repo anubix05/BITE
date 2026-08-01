@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:dio/dio.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -52,6 +54,24 @@ class GeminiService {
   ];
 
   String? _workingModelName;
+
+  /// Checks if a valid Gemini API key is configured either in settings, parameter, or dotenv.
+  Future<bool> hasApiKey({String? apiKeyOverride}) async {
+    String? settingsKey;
+    try {
+      final settings = await isarService.getOrCreateSettings();
+      if (settings.geminiApiKeyOverride?.trim().isNotEmpty == true) {
+        settingsKey = settings.geminiApiKeyOverride!.trim();
+      }
+    } catch (_) {}
+
+    final key = (apiKeyOverride?.trim().isNotEmpty == true ? apiKeyOverride!.trim() : null) ??
+        settingsKey ??
+        dotenv.env['GEMINI_API_KEY']?.trim() ??
+        '';
+
+    return key.isNotEmpty && key != 'YOUR_GEMINI_API_KEY_HERE';
+  }
 
   /// Analyse a meal from text and/or image with automatic model fallback.
   Future<MealAnalysisResult> analyzeMeal({
@@ -281,4 +301,35 @@ Rules:
       throw Exception('Failed to parse Gemini response: $e\nRaw: $raw');
     }
   }
+}
+
+/// Shows a user-friendly alert dialog when the Gemini API key is missing.
+Future<void> showApiKeyMissingDialog(BuildContext context) {
+  return showDialog<void>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      icon: const Icon(Icons.key_off_rounded, size: 40, color: Colors.amber),
+      title: const Text('Gemini API Key Required', textAlign: TextAlign.center),
+      content: const Text(
+        'The Gemini API key has not been configured.\n\nPlease add your Gemini API key in Settings -> AI Settings to use AI features like natural language parsing and photo analysis.\n\nYou can also log meals manually without an API key.',
+        textAlign: TextAlign.center,
+      ),
+      actionsAlignment: MainAxisAlignment.spaceEvenly,
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(ctx).pop(),
+          child: const Text('Cancel'),
+        ),
+        FilledButton.icon(
+          onPressed: () {
+            Navigator.of(ctx).pop();
+            context.pushNamed('settings');
+          },
+          icon: const Icon(Icons.settings_rounded, size: 18),
+          label: const Text('Add API Key'),
+        ),
+      ],
+    ),
+  );
 }

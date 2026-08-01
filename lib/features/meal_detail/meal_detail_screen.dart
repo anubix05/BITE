@@ -181,6 +181,14 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
 
     if (resultText == null || resultText.trim().isEmpty || !mounted) return;
 
+    final hasKey = await GeminiService.instance.hasApiKey();
+    if (!hasKey) {
+      if (mounted) {
+        await showApiKeyMissingDialog(context);
+      }
+      return;
+    }
+
     setState(() => _reAnalyzing = true);
 
     try {
