@@ -78,35 +78,10 @@ class _LogMealScreenState extends ConsumerState<LogMealScreen> {
     final text = _textController.text.trim();
     if (text.isEmpty && _imageBytes == null) {
       if (mounted) {
-        final cs = Theme.of(context).colorScheme;
-        await showDialog<void>(
-          context: context,
-          useRootNavigator: true,
-          builder: (ctx) => AlertDialog(
-            backgroundColor: cs.surfaceContainerHigh,
-            surfaceTintColor: Colors.transparent,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-            icon: const Icon(Icons.restaurant_rounded, size: 36, color: Colors.amber),
-            title: Text('Describe Your Meal', textAlign: TextAlign.center, style: TextStyle(color: cs.onSurface, fontWeight: FontWeight.bold)),
-            content: Text(
-              'Please type what you ate (e.g. "1 plate biryani and Pepsi") or snap a photo before analyzing.',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, color: cs.onSurfaceVariant),
-            ),
-            actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-            actions: [
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: () => Navigator.of(ctx).pop(),
-                  style: FilledButton.styleFrom(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                  child: const Text('Got it', style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
-              ),
-            ],
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please describe what you ate or snap a photo to analyze. 🍛'),
+            behavior: SnackBarBehavior.floating,
           ),
         );
       }
