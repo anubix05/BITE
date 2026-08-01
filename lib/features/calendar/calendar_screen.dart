@@ -413,15 +413,20 @@ class _CalendarDayTileState extends State<_CalendarDayTile> {
       textColor = cs.onSurface.withValues(alpha: 0.25);
       border = null;
     } else if (widget.isSelected) {
-      bgColor = cs.primary;
-      textColor = cs.onPrimary;
-      border = widget.isToday ? Border.all(color: cs.onPrimary, width: 2) : null;
+      bgColor = hasData
+          ? widget.status!.color.withValues(alpha: 0.3)
+          : cs.primary.withValues(alpha: 0.2);
+      textColor = cs.onSurface;
+      border = Border.all(
+        color: hasData ? widget.status!.color : cs.primary,
+        width: 2.5,
+      );
     } else if (widget.isToday) {
       bgColor = cs.primary.withValues(alpha: 0.12);
       textColor = cs.primary;
       border = Border.all(color: cs.primary, width: 2);
     } else if (hasData) {
-      bgColor = widget.status!.color.withValues(alpha: 0.25);
+      bgColor = widget.status!.color.withValues(alpha: 0.2);
       textColor = cs.onSurface;
       border = null;
     } else {
@@ -469,7 +474,8 @@ class _CalendarDayTileState extends State<_CalendarDayTile> {
           boxShadow: widget.isSelected || _isPressed
               ? [
                   BoxShadow(
-                    color: cs.primary.withValues(alpha: 0.35),
+                    color: (hasData ? widget.status!.color : cs.primary)
+                        .withValues(alpha: 0.35),
                     blurRadius: 8,
                     spreadRadius: 1,
                   )
@@ -492,10 +498,10 @@ class _CalendarDayTileState extends State<_CalendarDayTile> {
               ),
               if (hasData)
                 Container(
-                  width: 4,
-                  height: 4,
+                  width: 5,
+                  height: 5,
                   decoration: BoxDecoration(
-                    color: widget.isSelected ? cs.onPrimary : widget.status!.color,
+                    color: widget.status!.color,
                     shape: BoxShape.circle,
                   ),
                 ),
