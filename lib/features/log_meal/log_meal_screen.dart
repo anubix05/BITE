@@ -129,6 +129,9 @@ class _LogMealScreenState extends ConsumerState<LogMealScreen> {
     final isSuccess = state.status == LogMealStatus.success;
 
     final cs = Theme.of(context).colorScheme;
+    final dateParam = GoRouterState.of(context).uri.queryParameters['date'];
+    final selectedDate = ref.watch(selectedDateProvider);
+    final activeTargetDate = (dateParam != null ? DateTime.tryParse(dateParam) : null) ?? selectedDate;
 
     return PopScope(
       canPop: !isSuccess,
@@ -207,16 +210,13 @@ class _LogMealScreenState extends ConsumerState<LogMealScreen> {
                           originalInput: _textController.text,
                           imagePath: _imagePath,
                           onConfirm: () async {
-                            final dateParam = GoRouterState.of(context).uri.queryParameters['date'];
-                            final selectedDate = ref.watch(selectedDateProvider);
-                            final targetDate = (dateParam != null ? DateTime.tryParse(dateParam) : null) ?? selectedDate;
                             await ref
                                 .read(logMealNotifierProvider.notifier)
                                 .saveMeal(
                                   originalInput: _textController.text,
                                   result: state.result!,
                                   imagePath: _imagePath,
-                                  targetDate: targetDate,
+                                  targetDate: activeTargetDate,
                                 );
                             ref.invalidate(todaySnapshotProvider);
                             await HapticFeedback.mediumImpact();
