@@ -91,7 +91,7 @@ class BackupService {
           if (await file.exists()) {
             final bytes = await file.readAsBytes();
             final filename = meal.imagePath!.split(RegExp(r'[/\\]')).last;
-            final name = 'images/${meal.id}_$filename';
+            final name = 'images/$filename';
             archive.addFile(ArchiveFile(name, bytes.length, bytes));
           }
         }
@@ -207,6 +207,24 @@ class BackupService {
 
             await isarService.saveMeal(importedMeal);
           }
+
+          // Auto-heal pass for any meals with broken image paths
+          final allMeals = await isarService.getAllMeals(limit: 999999);
+          for (final m in allMeals) {
+            if (m.imagePath != null && !File(m.imagePath!).existsSync()) {
+              final rawFilename = m.imagePath!.split(RegExp(r'[/\\]')).last;
+              final parts = rawFilename.split('_');
+              for (int i = 0; i < parts.length; i++) {
+                final testName = parts.sublist(i).join('_');
+                final candidate = '${imagesDir.path}/$testName';
+                if (File(candidate).existsSync()) {
+                  m.imagePath = candidate;
+                  await isarService.saveMeal(m);
+                  break;
+                }
+              }
+            }
+          }
         }
       }
 
@@ -316,9 +334,32 @@ class BackupService {
           .toList();
 
     final origPath = m['imagePath'] as String?;
-    if (origPath != null) {
-      final filename = origPath.split(RegExp(r'[/\\]')).last;
-      meal.imagePath = '$imagesDir/$filename';
+    if (origPath != null && origPath.isNotEmpty) {
+      final rawFilename = origPath.split(RegExp(r'[/\\]')).last;
+      final mealId = m['id'];
+
+      final candidate1 = '$imagesDir/$rawFilename';
+      final candidate2 = (mealId != null) ? '$imagesDir/${mealId}_$rawFilename' : null;
+
+      if (File(candidate1).existsSync()) {
+        meal.imagePath = candidate1;
+      } else if (candidate2 != null && File(candidate2).existsSync()) {
+        meal.imagePath = candidate2;
+      } else {
+        String? foundMatch;
+        try {
+          final dir = Directory(imagesDir);
+          if (dir.existsSync()) {
+            for (final entity in dir.listSync()) {
+              if (entity is File && entity.path.endsWith(rawFilename)) {
+                foundMatch = entity.path;
+                break;
+              }
+            }
+          }
+        } catch (_) {}
+        meal.imagePath = foundMatch ?? candidate1;
+      }
     }
     return meal;
   }
