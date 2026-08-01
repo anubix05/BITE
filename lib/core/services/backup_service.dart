@@ -26,13 +26,13 @@ class BackupService {
       final mealsJson = jsonEncode(meals.map(_mealToMap).toList());
       final settingsJson = jsonEncode(_settingsToMap(settings));
       final versionJson = jsonEncode({
-        'version': '1.3.1',
+        'version': '2.0.2',
         'exportedAt': DateTime.now().toIso8601String(),
       });
 
       final archive = Archive();
-      archive.addFile(ArchiveFile(
-          'meals.json', mealsJson.length, utf8.encode(mealsJson)));
+      archive.addFile(
+          ArchiveFile('meals.json', mealsJson.length, utf8.encode(mealsJson)));
       archive.addFile(ArchiveFile(
           'settings.json', settingsJson.length, utf8.encode(settingsJson)));
       archive.addFile(ArchiveFile(
@@ -43,8 +43,7 @@ class BackupService {
           final file = File(meal.imagePath!);
           if (await file.exists()) {
             final bytes = await file.readAsBytes();
-            final name =
-                'images/${meal.id}_${file.uri.pathSegments.last}';
+            final name = 'images/${meal.id}_${file.uri.pathSegments.last}';
             archive.addFile(ArchiveFile(name, bytes.length, bytes));
           }
         }
@@ -169,10 +168,8 @@ class BackupService {
 
       for (final file in archive) {
         if (file.name.startsWith('images/') && file.isFile) {
-          final outPath =
-              '${imagesDir.path}/${file.name.split('/').last}';
-          await File(outPath)
-              .writeAsBytes(file.content as List<int>);
+          final outPath = '${imagesDir.path}/${file.name.split('/').last}';
+          await File(outPath).writeAsBytes(file.content as List<int>);
         }
       }
 
@@ -190,8 +187,8 @@ class BackupService {
           existingByCompositeKey[key] = ex;
         }
 
-        final mealsData = jsonDecode(
-            utf8.decode(mealsFile.content as List<int>)) as List;
+        final mealsData =
+            jsonDecode(utf8.decode(mealsFile.content as List<int>)) as List;
 
         for (final m in mealsData) {
           final mMap = m as Map<String, dynamic>;
@@ -216,9 +213,9 @@ class BackupService {
 
       final settingsFile = archive.findFile('settings.json');
       if (settingsFile != null) {
-        final settingsData = jsonDecode(
-                utf8.decode(settingsFile.content as List<int>))
-            as Map<String, dynamic>;
+        final settingsData =
+            jsonDecode(utf8.decode(settingsFile.content as List<int>))
+                as Map<String, dynamic>;
         final current = await isarService.getOrCreateSettings();
         _applySettingsMap(current, settingsData);
         await isarService.saveSettings(current);
@@ -295,19 +292,14 @@ class BackupService {
       ..originalUserInput = m['originalUserInput'] as String
       ..aiInterpretation = m['aiInterpretation'] as String?
       ..notes = m['notes'] as String?
-      ..aiConfidence =
-          (m['aiConfidence'] as num? ?? 0).toDouble()
+      ..aiConfidence = (m['aiConfidence'] as num? ?? 0).toDouble()
       ..userEdited = m['userEdited'] as bool? ?? false
-      ..totalCalories =
-          (m['totalCalories'] as num? ?? 0).toDouble()
-      ..totalProteinG =
-          (m['totalProteinG'] as num? ?? 0).toDouble()
+      ..totalCalories = (m['totalCalories'] as num? ?? 0).toDouble()
+      ..totalProteinG = (m['totalProteinG'] as num? ?? 0).toDouble()
       ..totalCarbsG = (m['totalCarbsG'] as num? ?? 0).toDouble()
       ..totalFatG = (m['totalFatG'] as num? ?? 0).toDouble()
-      ..totalSugarG =
-          (m['totalSugarG'] as num? ?? 0).toDouble()
-      ..totalSodiumMg =
-          (m['totalSodiumMg'] as num? ?? 0).toDouble()
+      ..totalSugarG = (m['totalSugarG'] as num? ?? 0).toDouble()
+      ..totalSodiumMg = (m['totalSodiumMg'] as num? ?? 0).toDouble()
       ..isFavorite = m['isFavorite'] as bool? ?? false
       ..items = ((m['items'] as List?) ?? [])
           .map((i) => _itemFromMap(i as Map<String, dynamic>))
@@ -324,8 +316,7 @@ class BackupService {
   MealItem _itemFromMap(Map<String, dynamic> i) => MealItem()
     ..name = i['name'] as String? ?? ''
     ..servingDescription = i['servingDescription'] as String? ?? ''
-    ..estimatedWeightG =
-        (i['estimatedWeightG'] as num? ?? 0).toDouble()
+    ..estimatedWeightG = (i['estimatedWeightG'] as num? ?? 0).toDouble()
     ..calories = (i['calories'] as num? ?? 0).toDouble()
     ..proteinG = (i['proteinG'] as num? ?? 0).toDouble()
     ..carbsG = (i['carbsG'] as num? ?? 0).toDouble()
@@ -347,25 +338,16 @@ class BackupService {
       };
 
   void _applySettingsMap(AppSettings s, Map<String, dynamic> m) {
-    s.goalCalories =
-        (m['goalCalories'] as num? ?? s.goalCalories).toDouble();
-    s.goalProteinG =
-        (m['goalProteinG'] as num? ?? s.goalProteinG).toDouble();
-    s.goalCarbsG =
-        (m['goalCarbsG'] as num? ?? s.goalCarbsG).toDouble();
-    s.goalFatG =
-        (m['goalFatG'] as num? ?? s.goalFatG).toDouble();
-    s.themeModeIndex =
-        m['themeModeIndex'] as int? ?? s.themeModeIndex;
+    s.goalCalories = (m['goalCalories'] as num? ?? s.goalCalories).toDouble();
+    s.goalProteinG = (m['goalProteinG'] as num? ?? s.goalProteinG).toDouble();
+    s.goalCarbsG = (m['goalCarbsG'] as num? ?? s.goalCarbsG).toDouble();
+    s.goalFatG = (m['goalFatG'] as num? ?? s.goalFatG).toDouble();
+    s.themeModeIndex = m['themeModeIndex'] as int? ?? s.themeModeIndex;
     s.isMaterial3Expressive =
         m['isMaterial3Expressive'] as bool? ?? s.isMaterial3Expressive;
-    s.customColorName =
-        m['customColorName'] as String? ?? s.customColorName;
-    s.customColorValue =
-        m['customColorValue'] as int? ?? s.customColorValue;
+    s.customColorName = m['customColorName'] as String? ?? s.customColorName;
+    s.customColorValue = m['customColorValue'] as int? ?? s.customColorValue;
     s.useMetric = m['useMetric'] as bool? ?? s.useMetric;
-    s.imageQuality =
-        m['imageQuality'] as int? ?? s.imageQuality;
+    s.imageQuality = m['imageQuality'] as int? ?? s.imageQuality;
   }
 }
-

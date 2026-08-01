@@ -960,7 +960,7 @@ If a feature increases friction instead of reducing it, redesign it until it fee
 
 ---
 
-# Implemented Features Status (v1.3.1)
+# Implemented Features Status (v2.0.2)
 
 The following features have been fully implemented, built, and verified in the codebase:
 

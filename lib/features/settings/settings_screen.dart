@@ -10,6 +10,7 @@ import '../../core/theme/app_theme.dart';
 import '../../core/widgets/expressive_slider.dart';
 import '../dashboard/providers/dashboard_provider.dart';
 import 'providers/settings_provider.dart';
+
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
   @override
@@ -129,7 +130,7 @@ class SettingsScreen extends ConsumerWidget {
                         .read(settingsNotifierProvider.notifier)
                         .setCustomColor(opt.name, opt.colorValue),
                   ),
-                 const SizedBox(height: 8),
+                  const SizedBox(height: 8),
 
                   // ── Data & Backup ──
                   _SectionHeader('Data & Backup'),
@@ -173,12 +174,11 @@ class SettingsScreen extends ConsumerWidget {
                   ListTile(
                     leading: const Icon(Icons.info_outline_rounded),
                     title: const Text('Bite'),
-                    subtitle: const Text('v1.3.1 • AI-powered meal tracker'),
+                    subtitle: const Text('v2.0.2 • AI-powered meal tracker'),
                   ),
                   const SizedBox(height: 40),
                 ]),
               ),
-
               loading: () => const SliverFillRemaining(
                 child: Center(child: CircularProgressIndicator()),
               ),
@@ -201,6 +201,7 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 }
+
 // ─────────────────────────────────────────────────────────────────
 // Section Header
 // ─────────────────────────────────────────────────────────────────
@@ -222,6 +223,7 @@ class _SectionHeader extends StatelessWidget {
     );
   }
 }
+
 // ─────────────────────────────────────────────────────────────────
 // Goal Tile — Expressive M3 Slider + Manual Number Input Dialog
 // ─────────────────────────────────────────────────────────────────
@@ -247,6 +249,7 @@ class _GoalTile extends StatefulWidget {
   @override
   State<_GoalTile> createState() => _GoalTileState();
 }
+
 class _GoalTileState extends State<_GoalTile> {
   late double _current;
 
@@ -255,6 +258,7 @@ class _GoalTileState extends State<_GoalTile> {
     super.initState();
     _current = widget.value;
   }
+
   @override
   void didUpdateWidget(covariant _GoalTile oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -262,10 +266,10 @@ class _GoalTileState extends State<_GoalTile> {
       _current = widget.value;
     }
   }
+
   Future<void> _showManualInputDialog() async {
     HapticFeedback.lightImpact();
-    final controller =
-        TextEditingController(text: _current.toStringAsFixed(0));
+    final controller = TextEditingController(text: _current.toStringAsFixed(0));
     final result = await showDialog<double>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -276,7 +280,8 @@ class _GoalTileState extends State<_GoalTile> {
           autofocus: true,
           decoration: InputDecoration(
             suffixText: widget.unit,
-            hintText: 'Enter value (${widget.min.toInt()} - ${widget.max.toInt()})',
+            hintText:
+                'Enter value (${widget.min.toInt()} - ${widget.max.toInt()})',
           ),
         ),
         actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
@@ -286,7 +291,6 @@ class _GoalTileState extends State<_GoalTile> {
               Expanded(
                 child: OutlinedButton(
                   onPressed: () => Navigator.of(ctx).pop(null),
-
                   style: OutlinedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -331,6 +335,7 @@ class _GoalTileState extends State<_GoalTile> {
       widget.onChanged(clamped);
     }
   }
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
@@ -352,36 +357,36 @@ class _GoalTileState extends State<_GoalTile> {
               Tooltip(
                 message: 'Tap to enter manually',
                 child: Material(
-                  color: cs.primaryContainer,
-                  borderRadius: BorderRadius.circular(10),
-                  child: InkWell(
-                    onTap: _showManualInputDialog,
+                    color: cs.primaryContainer,
                     borderRadius: BorderRadius.circular(10),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            '${_current.toStringAsFixed(0)} ${widget.unit}',
-                            style: TextStyle(
-                              color: cs.onPrimaryContainer,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 13,
+                    child: InkWell(
+                      onTap: _showManualInputDialog,
+                      borderRadius: BorderRadius.circular(10),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '${_current.toStringAsFixed(0)} ${widget.unit}',
+                              style: TextStyle(
+                                color: cs.onPrimaryContainer,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 4),
-                          Icon(
-                            Icons.edit_rounded,
-                            size: 14,
-                            color: cs.onPrimaryContainer.withValues(alpha: 0.7),
-                          ),
-                        ],
+                            const SizedBox(width: 4),
+                            Icon(
+                              Icons.edit_rounded,
+                              size: 14,
+                              color:
+                                  cs.onPrimaryContainer.withValues(alpha: 0.7),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                ),
+                    )),
               ),
             ],
           ),
@@ -494,11 +499,13 @@ class _ThemeStyleTile extends StatelessWidget {
     );
   }
 }
+
 class ThemeColorOption {
   final String name;
   final int colorValue;
   const ThemeColorOption(this.name, this.colorValue);
 }
+
 const List<ThemeColorOption> _themeColors = [
   ThemeColorOption('Default', 0xFF27272A),
   ThemeColorOption('Monotone', 0xFF000000),
@@ -520,7 +527,6 @@ class _CustomColorSelectorTile extends StatelessWidget {
   final String selectedName;
   final bool enabled;
   final ValueChanged<ThemeColorOption> onSelect;
-
 
   @override
   Widget build(BuildContext context) {
@@ -600,6 +606,7 @@ class _CustomColorSelectorTile extends StatelessWidget {
     );
   }
 }
+
 // ─────────────────────────────────────────────────────────────────
 // Backup Tile
 // ─────────────────────────────────────────────────────────────────
@@ -648,41 +655,42 @@ class _BackupTile extends StatelessWidget {
                     ),
                     child: Icon(icon, color: color, size: 22),
                   ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: const TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        subtitle,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withValues(alpha: 0.5),
-                            ),
-                      ),
-                    ],
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          subtitle,
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.5),
+                                  ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Icon(Icons.chevron_right_rounded,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.3)),
-              ],
+                  Icon(Icons.chevron_right_rounded,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.3)),
+                ],
+              ),
             ),
           ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -696,6 +704,7 @@ class _ApiKeyTile extends StatefulWidget {
   @override
   State<_ApiKeyTile> createState() => _ApiKeyTileState();
 }
+
 class _ApiKeyTileState extends State<_ApiKeyTile> {
   @override
   Widget build(BuildContext context) {
@@ -711,8 +720,7 @@ class _ApiKeyTileState extends State<_ApiKeyTile> {
       trailing: const Icon(Icons.edit_outlined),
       onTap: () async {
         HapticFeedback.lightImpact();
-        final controller =
-            TextEditingController(text: widget.currentKey);
+        final controller = TextEditingController(text: widget.currentKey);
         final result = await showDialog<String>(
           context: context,
           builder: (ctx) => AlertDialog(
@@ -749,8 +757,7 @@ class _ApiKeyTileState extends State<_ApiKeyTile> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: FilledButton(
-                      onPressed: () =>
-                          Navigator.of(ctx).pop(controller.text),
+                      onPressed: () => Navigator.of(ctx).pop(controller.text),
                       style: FilledButton.styleFrom(
                         backgroundColor: Theme.of(ctx).colorScheme.primary,
                         foregroundColor: Theme.of(ctx).colorScheme.onPrimary,
@@ -783,10 +790,12 @@ class _SavedMealsManagementSheet extends StatefulWidget {
   final WidgetRef ref;
 
   @override
-  State<_SavedMealsManagementSheet> createState() => _SavedMealsManagementSheetState();
+  State<_SavedMealsManagementSheet> createState() =>
+      _SavedMealsManagementSheetState();
 }
 
-class _SavedMealsManagementSheetState extends State<_SavedMealsManagementSheet> {
+class _SavedMealsManagementSheetState
+    extends State<_SavedMealsManagementSheet> {
   List<Meal> _savedMeals = [];
   String _searchQuery = '';
   bool _loading = true;
@@ -845,7 +854,10 @@ class _SavedMealsManagementSheetState extends State<_SavedMealsManagementSheet> 
               children: [
                 Text(
                   'Saved Meals (Memory)',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge
+                      ?.copyWith(fontWeight: FontWeight.w700),
                 ),
                 const Spacer(),
                 IconButton(
@@ -862,8 +874,10 @@ class _SavedMealsManagementSheetState extends State<_SavedMealsManagementSheet> 
               decoration: InputDecoration(
                 hintText: 'Search saved meals...',
                 prefixIcon: const Icon(Icons.search_rounded),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
             ),
           ),
@@ -873,8 +887,11 @@ class _SavedMealsManagementSheetState extends State<_SavedMealsManagementSheet> 
                 : filtered.isEmpty
                     ? Center(
                         child: Text(
-                          _searchQuery.isEmpty ? 'No saved meals found.' : 'No matching meals.',
-                          style: TextStyle(color: cs.onSurface.withValues(alpha: 0.5)),
+                          _searchQuery.isEmpty
+                              ? 'No saved meals found.'
+                              : 'No matching meals.',
+                          style: TextStyle(
+                              color: cs.onSurface.withValues(alpha: 0.5)),
                         ),
                       )
                     : ListView.builder(
@@ -912,11 +929,16 @@ class _SavedMealsManagementSheetState extends State<_SavedMealsManagementSheet> 
 
   Future<void> _editMealDialog(BuildContext context, Meal meal) async {
     HapticFeedback.lightImpact();
-    final nameCtrl = TextEditingController(text: meal.aiInterpretation ?? meal.originalUserInput);
-    final calCtrl = TextEditingController(text: meal.totalCalories.toStringAsFixed(0));
-    final pCtrl = TextEditingController(text: meal.totalProteinG.toStringAsFixed(0));
-    final cCtrl = TextEditingController(text: meal.totalCarbsG.toStringAsFixed(0));
-    final fCtrl = TextEditingController(text: meal.totalFatG.toStringAsFixed(0));
+    final nameCtrl = TextEditingController(
+        text: meal.aiInterpretation ?? meal.originalUserInput);
+    final calCtrl =
+        TextEditingController(text: meal.totalCalories.toStringAsFixed(0));
+    final pCtrl =
+        TextEditingController(text: meal.totalProteinG.toStringAsFixed(0));
+    final cCtrl =
+        TextEditingController(text: meal.totalCarbsG.toStringAsFixed(0));
+    final fCtrl =
+        TextEditingController(text: meal.totalFatG.toStringAsFixed(0));
 
     final saved = await showDialog<bool>(
       context: context,
@@ -932,8 +954,10 @@ class _SavedMealsManagementSheetState extends State<_SavedMealsManagementSheet> 
                 controller: nameCtrl,
                 decoration: InputDecoration(
                   labelText: 'Meal Name',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                 ),
               ),
               const SizedBox(height: 12),
@@ -946,8 +970,10 @@ class _SavedMealsManagementSheetState extends State<_SavedMealsManagementSheet> 
                       decoration: InputDecoration(
                         labelText: 'Calories',
                         suffixText: 'kcal',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 12),
                       ),
                     ),
                   ),
@@ -959,8 +985,10 @@ class _SavedMealsManagementSheetState extends State<_SavedMealsManagementSheet> 
                       decoration: InputDecoration(
                         labelText: 'Protein',
                         suffixText: 'g',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 12),
                       ),
                     ),
                   ),
@@ -976,8 +1004,10 @@ class _SavedMealsManagementSheetState extends State<_SavedMealsManagementSheet> 
                       decoration: InputDecoration(
                         labelText: 'Carbs',
                         suffixText: 'g',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 12),
                       ),
                     ),
                   ),
@@ -989,8 +1019,10 @@ class _SavedMealsManagementSheetState extends State<_SavedMealsManagementSheet> 
                       decoration: InputDecoration(
                         labelText: 'Fat',
                         suffixText: 'g',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 12),
                       ),
                     ),
                   ),
@@ -1007,7 +1039,8 @@ class _SavedMealsManagementSheetState extends State<_SavedMealsManagementSheet> 
                 child: OutlinedButton(
                   onPressed: () => Navigator.of(ctx).pop(false),
                   style: OutlinedButton.styleFrom(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                   child: const Text('Cancel'),
@@ -1018,7 +1051,8 @@ class _SavedMealsManagementSheetState extends State<_SavedMealsManagementSheet> 
                 child: FilledButton(
                   onPressed: () => Navigator.of(ctx).pop(true),
                   style: FilledButton.styleFrom(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                   child: const Text('Save'),
@@ -1085,7 +1119,9 @@ class _SavedMealCard extends StatelessWidget {
             children: [
               IconButton(
                 icon: Icon(
-                  meal.isFavorite ? Icons.favorite_rounded : Icons.favorite_border,
+                  meal.isFavorite
+                      ? Icons.favorite_rounded
+                      : Icons.favorite_border,
                   color: meal.isFavorite ? Colors.red : null,
                 ),
                 onPressed: onToggleFavorite,
@@ -1094,7 +1130,8 @@ class _SavedMealCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   meal.aiInterpretation ?? meal.originalUserInput,
-                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w700, fontSize: 16),
                 ),
               ),
               IconButton(
@@ -1113,10 +1150,14 @@ class _SavedMealCard extends StatelessWidget {
           Wrap(
             spacing: 8,
             children: [
-              _Chip('${meal.totalCalories.toStringAsFixed(0)} kcal', cs.primary),
-              _Chip('P ${meal.totalProteinG.toStringAsFixed(0)}g', AppTheme.proteinColor),
-              _Chip('C ${meal.totalCarbsG.toStringAsFixed(0)}g', AppTheme.carbsColor),
-              _Chip('F ${meal.totalFatG.toStringAsFixed(0)}g', AppTheme.fatColor),
+              _Chip(
+                  '${meal.totalCalories.toStringAsFixed(0)} kcal', cs.primary),
+              _Chip('P ${meal.totalProteinG.toStringAsFixed(0)}g',
+                  AppTheme.proteinColor),
+              _Chip('C ${meal.totalCarbsG.toStringAsFixed(0)}g',
+                  AppTheme.carbsColor),
+              _Chip(
+                  'F ${meal.totalFatG.toStringAsFixed(0)}g', AppTheme.fatColor),
             ],
           ),
         ],
@@ -1144,4 +1185,3 @@ class _Chip extends StatelessWidget {
     );
   }
 }
-
