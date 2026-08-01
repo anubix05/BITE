@@ -90,7 +90,8 @@ class GoalCalculatorScreen extends ConsumerWidget {
       body: SafeArea(
         child: settingsAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (err, st) => Center(child: Text('Error loading settings: $err')),
+          error: (err, st) =>
+              Center(child: Text('Error loading settings: $err')),
           data: (settings) {
             final currentWeight = settings.weightKg;
             final targetWeight = settings.targetWeightKg;
@@ -144,7 +145,8 @@ class GoalCalculatorScreen extends ConsumerWidget {
                 ),
 
                 SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 8.0),
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
                       // Personal Metrics Summary Banner
@@ -153,7 +155,8 @@ class GoalCalculatorScreen extends ConsumerWidget {
                         decoration: BoxDecoration(
                           color: cs.surfaceContainerLow,
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.3)),
+                          border: Border.all(
+                              color: cs.outlineVariant.withValues(alpha: 0.3)),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -163,7 +166,10 @@ class GoalCalculatorScreen extends ConsumerWidget {
                               children: [
                                 Text(
                                   'Current Profile',
-                                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelMedium
+                                      ?.copyWith(
                                         color: cs.onSurfaceVariant,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -171,7 +177,10 @@ class GoalCalculatorScreen extends ConsumerWidget {
                                 const SizedBox(height: 2),
                                 Text(
                                   '${currentWeight.toStringAsFixed(1)} kg  •  ${settings.heightCm.round()} cm  •  ${settings.ageYears} yrs',
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
                                         fontWeight: FontWeight.bold,
                                       ),
                                 ),
@@ -196,18 +205,23 @@ class GoalCalculatorScreen extends ConsumerWidget {
                         decoration: BoxDecoration(
                           color: cs.surfaceContainerLow,
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.4)),
+                          border: Border.all(
+                              color: cs.outlineVariant.withValues(alpha: 0.4)),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
                               children: [
-                                Icon(Icons.flag_rounded, color: cs.primary, size: 22),
+                                Icon(Icons.flag_rounded,
+                                    color: cs.primary, size: 22),
                                 const SizedBox(width: 10),
                                 Text(
                                   'Target Weight Goal',
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(
                                         fontWeight: FontWeight.bold,
                                       ),
                                 ),
@@ -218,8 +232,9 @@ class GoalCalculatorScreen extends ConsumerWidget {
                                     color: cs.primaryContainer,
                                     borderRadius: BorderRadius.circular(12),
                                     child: InkWell(
-                                      onTap: () => _showManualTargetWeightDialog(
-                                          context, ref, targetWeight),
+                                      onTap: () =>
+                                          _showManualTargetWeightDialog(
+                                              context, ref, targetWeight),
                                       borderRadius: BorderRadius.circular(12),
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
@@ -233,7 +248,8 @@ class GoalCalculatorScreen extends ConsumerWidget {
                                                   .textTheme
                                                   .labelLarge
                                                   ?.copyWith(
-                                                    color: cs.onPrimaryContainer,
+                                                    color:
+                                                        cs.onPrimaryContainer,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                             ),
@@ -259,8 +275,11 @@ class GoalCalculatorScreen extends ConsumerWidget {
                               max: 200.0,
                               divisions: 340, // 0.5 kg steps
                               onChanged: (v) {
-                                ref.read(settingsNotifierProvider.notifier).updateGoalCalculator(
-                                      targetWeightKg: (v * 2).round() / 2, // Round to nearest 0.5kg
+                                ref
+                                    .read(settingsNotifierProvider.notifier)
+                                    .updateGoalCalculator(
+                                      targetWeightKg: (v * 2).round() /
+                                          2, // Round to nearest 0.5kg
                                     );
                               },
                             ),
@@ -288,7 +307,10 @@ class GoalCalculatorScreen extends ConsumerWidget {
                                       : isGain
                                           ? 'Weight Gain Goal (${(targetWeight - currentWeight).toStringAsFixed(1)} kg increase)'
                                           : 'Maintenance Goal (Maintain current weight)',
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
                                         fontWeight: FontWeight.w600,
                                         color: isLoss
                                             ? Colors.orange.shade700
@@ -307,20 +329,24 @@ class GoalCalculatorScreen extends ConsumerWidget {
                       // Weekly Rate Selection (Only shown if Loss or Gain)
                       if (!isMaintain) ...[
                         Text(
-                          isLoss ? 'Rate of Weight Loss per Week' : 'Rate of Weight Gain per Week',
-                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: cs.onSurfaceVariant,
-                              ),
+                          isLoss
+                              ? 'Rate of Weight Loss per Week'
+                              : 'Rate of Weight Gain per Week',
+                          style:
+                              Theme.of(context).textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: cs.onSurfaceVariant,
+                                  ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           isLoss
                               ? 'Select how aggressively you want to reduce your calories.'
                               : 'Select your target weekly weight gain pace.',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: cs.onSurfaceVariant,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: cs.onSurfaceVariant,
+                                  ),
                         ),
                         const SizedBox(height: 12),
                         Row(
@@ -331,7 +357,8 @@ class GoalCalculatorScreen extends ConsumerWidget {
 
                             return Expanded(
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 4.0),
                                 child: Material(
                                   color: isSelected
                                       ? cs.primaryContainer
@@ -342,17 +369,21 @@ class GoalCalculatorScreen extends ConsumerWidget {
                                     onTap: () {
                                       HapticFeedback.selectionClick();
                                       ref
-                                          .read(settingsNotifierProvider.notifier)
-                                          .updateGoalCalculator(weeklyRateKg: rate);
+                                          .read(
+                                              settingsNotifierProvider.notifier)
+                                          .updateGoalCalculator(
+                                              weeklyRateKg: rate);
                                     },
                                     child: Container(
-                                      padding: const EdgeInsets.symmetric(vertical: 14),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 14),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(16),
                                         border: Border.all(
                                           color: isSelected
                                               ? cs.primary
-                                              : cs.outlineVariant.withValues(alpha: 0.3),
+                                              : cs.outlineVariant
+                                                  .withValues(alpha: 0.3),
                                           width: isSelected ? 2 : 1,
                                         ),
                                       ),
@@ -378,7 +409,9 @@ class GoalCalculatorScreen extends ConsumerWidget {
                                                 .bodySmall
                                                 ?.copyWith(
                                                   color: isSelected
-                                                      ? cs.onPrimaryContainer.withValues(alpha: 0.8)
+                                                      ? cs.onPrimaryContainer
+                                                          .withValues(
+                                                              alpha: 0.8)
                                                       : cs.onSurfaceVariant,
                                                 ),
                                           ),
@@ -388,9 +421,11 @@ class GoalCalculatorScreen extends ConsumerWidget {
                                                 horizontal: 8, vertical: 2),
                                             decoration: BoxDecoration(
                                               color: isSelected
-                                                  ? cs.primary.withValues(alpha: 0.15)
+                                                  ? cs.primary
+                                                      .withValues(alpha: 0.15)
                                                   : cs.surfaceContainerHigh,
-                                              borderRadius: BorderRadius.circular(8),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                             ),
                                             child: Text(
                                               '$sign$dailyDiff kcal',
@@ -399,7 +434,9 @@ class GoalCalculatorScreen extends ConsumerWidget {
                                                   .labelSmall
                                                   ?.copyWith(
                                                     fontWeight: FontWeight.bold,
-                                                    color: isSelected ? cs.primary : cs.onSurface,
+                                                    color: isSelected
+                                                        ? cs.primary
+                                                        : cs.onSurface,
                                                   ),
                                             ),
                                           ),
@@ -439,7 +476,8 @@ class GoalCalculatorScreen extends ConsumerWidget {
                               Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: cs.onPrimaryContainer.withValues(alpha: 0.1),
+                                  color: cs.onPrimaryContainer
+                                      .withValues(alpha: 0.1),
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(Icons.local_fire_department_rounded,
@@ -452,22 +490,33 @@ class GoalCalculatorScreen extends ConsumerWidget {
                                   children: [
                                     Text(
                                       'Target Daily Calories',
-                                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                                            color: cs.onPrimaryContainer.withValues(alpha: 0.8),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelMedium
+                                          ?.copyWith(
+                                            color: cs.onPrimaryContainer
+                                                .withValues(alpha: 0.8),
                                             fontWeight: FontWeight.bold,
                                           ),
                                     ),
                                     Text(
                                       '${result.targetCalories.round()} kcal',
-                                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineMedium
+                                          ?.copyWith(
                                             fontWeight: FontWeight.w900,
                                             color: cs.onPrimaryContainer,
                                           ),
                                     ),
                                     Text(
                                       'TDEE Maintenance: ${result.tdee.round()} kcal/day',
-                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                            color: cs.onPrimaryContainer.withValues(alpha: 0.8),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                            color: cs.onPrimaryContainer
+                                                .withValues(alpha: 0.8),
                                           ),
                                     ),
                                   ],
@@ -519,7 +568,9 @@ class GoalCalculatorScreen extends ConsumerWidget {
                         child: FilledButton.icon(
                           onPressed: () async {
                             HapticFeedback.mediumImpact();
-                            await ref.read(settingsNotifierProvider.notifier).updateGoals(
+                            await ref
+                                .read(settingsNotifierProvider.notifier)
+                                .updateGoals(
                                   calories: result.targetCalories,
                                   protein: result.targetProteinG,
                                   carbs: result.targetCarbsG,
@@ -531,11 +582,13 @@ class GoalCalculatorScreen extends ConsumerWidget {
                                 SnackBar(
                                   content: Row(
                                     children: [
-                                      Icon(Icons.check_circle_rounded, color: cs.onInverseSurface),
+                                      Icon(Icons.check_circle_rounded,
+                                          color: cs.onInverseSurface),
                                       const SizedBox(width: 10),
                                       Text(
                                         'Daily nutrition goals updated!',
-                                        style: TextStyle(color: cs.onInverseSurface),
+                                        style: TextStyle(
+                                            color: cs.onInverseSurface),
                                       ),
                                     ],
                                   ),
@@ -560,7 +613,8 @@ class GoalCalculatorScreen extends ConsumerWidget {
                           icon: const Icon(Icons.check_rounded),
                           label: const Text(
                             'Apply to Daily Nutrition Goals',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),
