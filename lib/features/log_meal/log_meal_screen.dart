@@ -23,6 +23,7 @@ class _LogMealScreenState extends ConsumerState<LogMealScreen> {
   String? _imagePath;
 
   String? _inlineSnackBarMessage;
+  bool _isFromSavedMeal = false;
 
   void _showInlineSnackBar(String message) {
     setState(() {
@@ -100,6 +101,10 @@ class _LogMealScreenState extends ConsumerState<LogMealScreen> {
       return;
     }
 
+    setState(() {
+      _isFromSavedMeal = false;
+    });
+
     await ref.read(logMealNotifierProvider.notifier).analyze(
           text: text.isNotEmpty ? text : null,
           imageBytes: _imageBytes,
@@ -111,6 +116,9 @@ class _LogMealScreenState extends ConsumerState<LogMealScreen> {
     setState(() {
       _imageBytes = null;
       _imagePath = null;
+      if (_isFromSavedMeal) {
+        _textController.clear();
+      }
     });
   }
 
@@ -160,7 +168,34 @@ class _LogMealScreenState extends ConsumerState<LogMealScreen> {
                 ],
               ),
             ),
-
+            if (_inlineSnackBarMessage != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                child: Material(
+                  elevation: 6,
+                  color: cs.surfaceContainerHigh,
+                  borderRadius: BorderRadius.circular(16),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.restaurant_rounded, size: 20, color: Colors.amber),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            _inlineSnackBarMessage!,
+                            style: TextStyle(
+                              color: cs.onSurface,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             Expanded(
               child: state.status == LogMealStatus.analyzing
                   ? _AnalyzingView()
@@ -206,34 +241,6 @@ class _LogMealScreenState extends ConsumerState<LogMealScreen> {
                               setState(() => _imageBytes = null),
                         ),
             ),
-            if (_inlineSnackBarMessage != null)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                child: Material(
-                  elevation: 6,
-                  color: cs.surfaceContainerHigh,
-                  borderRadius: BorderRadius.circular(16),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.restaurant_rounded, size: 20, color: Colors.amber),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            _inlineSnackBarMessage!,
-                            style: TextStyle(
-                              color: cs.onSurface,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
           ],
         ),
       ),

@@ -36,6 +36,7 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
   String? _imagePath;
   List<Meal> _savedMeals = [];
   String? _inlineSnackBarMessage;
+  bool _isFromSavedMeal = false;
 
   void _showInlineSnackBar(String message) {
     setState(() {
@@ -112,6 +113,10 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
       return;
     }
 
+    setState(() {
+      _isFromSavedMeal = false;
+    });
+
     await ref.read(logMealNotifierProvider.notifier).analyze(
       text: text.isNotEmpty ? text : null,
       imageBytes: _imageBytes,
@@ -122,7 +127,9 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
     setState(() {
       _imageBytes = null;
       _imagePath = null;
-      // Retain _textController.text so user can rephrase/edit!
+      if (_isFromSavedMeal) {
+        _textController.clear();
+      }
     });
   }
   @override
@@ -179,6 +186,34 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
                 ],
               ),
             ),
+            if (_inlineSnackBarMessage != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                child: Material(
+                  elevation: 6,
+                  color: cs.surfaceContainerHigh,
+                  borderRadius: BorderRadius.circular(16),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.restaurant_rounded, size: 20, color: Colors.amber),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            _inlineSnackBarMessage!,
+                            style: TextStyle(
+                              color: cs.onSurface,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             Expanded(
               child: state.status == LogMealStatus.analyzing
                   ? _AnalyzingView()
@@ -218,6 +253,9 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
                           onGallery: () => _pickImage(ImageSource.gallery),
                           onClearImage: () => setState(() => _imageBytes = null),
                           onSelectSavedMeal: (meal) {
+                            setState(() {
+                              _isFromSavedMeal = true;
+                            });
                             _textController.text = meal.originalUserInput;
                             final cachedResult = MealAnalysisResult(
                               mealName: meal.aiInterpretation ?? meal.originalUserInput,
@@ -230,34 +268,6 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
                           },
                         ),
             ),
-            if (_inlineSnackBarMessage != null)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                child: Material(
-                  elevation: 6,
-                  color: cs.surfaceContainerHigh,
-                  borderRadius: BorderRadius.circular(16),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.restaurant_rounded, size: 20, color: Colors.amber),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            _inlineSnackBarMessage!,
-                            style: TextStyle(
-                              color: cs.onSurface,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
           ],
         ),
       ),
