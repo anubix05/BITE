@@ -8,6 +8,7 @@ import '../../core/database/isar_service.dart';
 
 import '../../core/widgets/today_calendar_button.dart';
 import '../../core/providers/selected_date_provider.dart';
+import '../settings/providers/settings_provider.dart';
 
 final _calendarProvider = FutureProvider.autoDispose<Map<DateTime, _DayStatus>>(
     (ref) async {
@@ -18,6 +19,7 @@ final _calendarProvider = FutureProvider.autoDispose<Map<DateTime, _DayStatus>>(
   // Need settings for goals
   final settings = await isarService.getOrCreateSettings();
   final goal = settings.goalCalories;
+  final isWeightGain = settings.targetWeightKg > (settings.weightKg + 0.1);
 
   final map = <DateTime, _DayStatus>{};
   for (final m in meals) {
@@ -26,6 +28,7 @@ final _calendarProvider = FutureProvider.autoDispose<Map<DateTime, _DayStatus>>(
     map[key] = _DayStatus(
       calories: (cur?.calories ?? 0) + m.totalCalories,
       goal: goal,
+      isWeightGain: isWeightGain,
     );
   }
   return map;
@@ -34,17 +37,23 @@ final _calendarProvider = FutureProvider.autoDispose<Map<DateTime, _DayStatus>>(
 class _DayStatus {
   final double calories;
   final double goal;
-  _DayStatus({required this.calories, required this.goal});
+  final bool isWeightGain;
+
+  _DayStatus({
+    required this.calories,
+    required this.goal,
+    this.isWeightGain = false,
+  });
 
   bool get hasData => calories > 0;
 
-  /// true = over limit, false = within limit
-  bool get isOver => calories > goal;
+  /// true = failed target (Over limit for weight loss, Under limit for weight gain)
+  bool get isUnfavorable => isWeightGain ? calories < goal : calories > goal;
 
   Color get color {
     if (!hasData) return const Color(0x00000000); // No data — transparent
-    if (isOver) return const Color(0xFFF87171);   // Over goal — red
-    return const Color(0xFF4ADE80);               // Within goal — green
+    if (isUnfavorable) return const Color(0xFFF87171);   // Failed target — red
+    return const Color(0xFF4ADE80);               // Goal achieved — green
   }
 }
 
@@ -245,32 +254,49 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             ),
 
             // Legend
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  _Legend(color: const Color(0xFF4ADE80), label: 'Within goal'),
-                  const SizedBox(width: 16),
-                  _Legend(color: const Color(0xFFF87171), label: 'Over limit'),
-                  const Spacer(),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: cs.primary, width: 1.5),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      'Today',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        color: cs.primary,
+            Builder(
+              builder: (context) {
+                final settingsAsync = ref.watch(settingsNotifierProvider);
+                final isWeightGain = settingsAsync.when(
+                  data: (s) => s.targetWeightKg > (s.weightKg + 0.1),
+                  loading: () => false,
+                  error: (_, __) => false,
+                );
+
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      _Legend(
+                        color: const Color(0xFF4ADE80),
+                        label: isWeightGain ? 'Goal reached' : 'Within goal',
                       ),
-                    ),
+                      const SizedBox(width: 16),
+                      _Legend(
+                        color: const Color(0xFFF87171),
+                        label: isWeightGain ? 'Under limit' : 'Over limit',
+                      ),
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: cs.primary, width: 1.5),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          'Today',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            color: cs.primary,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                );
+              },
             ),
           ],
         ),

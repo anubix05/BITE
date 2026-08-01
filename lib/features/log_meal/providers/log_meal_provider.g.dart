@@ -6,7 +6,7 @@ part of 'log_meal_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$logMealNotifierHash() => r'40aa149bd3db9e407f6bea28258451ba43807e71';
+String _$logMealNotifierHash() => r'9ef72a84c41a919f9583f56a29cc318086911537';
 
 /// See also [LogMealNotifier].
 @ProviderFor(LogMealNotifier)

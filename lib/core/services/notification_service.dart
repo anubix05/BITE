@@ -35,19 +35,27 @@ class NotificationService {
         },
       );
 
-      // Request Android 13+ permission
-      final androidPlatform =
-          _notifications.resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>();
-      if (androidPlatform != null) {
-        await androidPlatform.requestNotificationsPermission();
-      }
-
       _isInitialized = true;
       await updateSchedule();
     } catch (e) {
       debugPrint('NotificationService init error: $e');
     }
+  }
+
+  /// Explicitly request notification permission when user taps Allow
+  Future<bool> requestPermission() async {
+    try {
+      final androidPlatform =
+          _notifications.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
+      if (androidPlatform != null) {
+        final granted = await androidPlatform.requestNotificationsPermission();
+        return granted ?? false;
+      }
+    } catch (e) {
+      debugPrint('NotificationService requestPermission error: $e');
+    }
+    return false;
   }
 
   /// Check rules and update scheduled reminders

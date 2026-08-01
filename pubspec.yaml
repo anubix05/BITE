@@ -1,7 +1,7 @@
 name: bite
 description: AI-powered meal tracker — describe what you ate, let the AI do the rest.
 publish_to: 'none'
-version: 2.0.2+32
+version: 3.0.0+33
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -23,8 +23,10 @@ dependencies:
   # AI & Networking
   google_generative_ai: ^0.4.6
   dio: ^5.7.0
+  url_launcher: ^6.3.0
 
   # UI & Media
+  flutter_svg: ^2.0.10+1
   fl_chart: ^0.69.0
   google_fonts: ^6.2.1
   image_picker: ^1.1.2
@@ -35,7 +37,8 @@ dependencies:
   file_picker: ^8.1.7
   share_plus: ^10.0.2
 
-  # Notifications
+  # Permissions & System
+  permission_handler: ^11.3.1
   flutter_local_notifications: ^17.2.2
   timezone: ^0.9.4
 

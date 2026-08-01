@@ -17,65 +17,100 @@ const AppSettingsSchema = CollectionSchema(
   name: r'AppSettings',
   id: -5633561779022347008,
   properties: {
-    r'customColorName': PropertySchema(
+    r'activityLevelIndex': PropertySchema(
       id: 0,
+      name: r'activityLevelIndex',
+      type: IsarType.long,
+    ),
+    r'ageYears': PropertySchema(
+      id: 1,
+      name: r'ageYears',
+      type: IsarType.long,
+    ),
+    r'customColorName': PropertySchema(
+      id: 2,
       name: r'customColorName',
       type: IsarType.string,
     ),
     r'customColorValue': PropertySchema(
-      id: 1,
+      id: 3,
       name: r'customColorValue',
       type: IsarType.long,
     ),
     r'geminiApiKeyOverride': PropertySchema(
-      id: 2,
+      id: 4,
       name: r'geminiApiKeyOverride',
       type: IsarType.string,
     ),
+    r'gender': PropertySchema(
+      id: 5,
+      name: r'gender',
+      type: IsarType.string,
+    ),
     r'goalCalories': PropertySchema(
-      id: 3,
+      id: 6,
       name: r'goalCalories',
       type: IsarType.double,
     ),
     r'goalCarbsG': PropertySchema(
-      id: 4,
+      id: 7,
       name: r'goalCarbsG',
       type: IsarType.double,
     ),
     r'goalFatG': PropertySchema(
-      id: 5,
+      id: 8,
       name: r'goalFatG',
       type: IsarType.double,
     ),
     r'goalProteinG': PropertySchema(
-      id: 6,
+      id: 9,
       name: r'goalProteinG',
       type: IsarType.double,
     ),
+    r'heightCm': PropertySchema(
+      id: 10,
+      name: r'heightCm',
+      type: IsarType.double,
+    ),
     r'imageQuality': PropertySchema(
-      id: 7,
+      id: 11,
       name: r'imageQuality',
       type: IsarType.long,
     ),
     r'isMaterial3Expressive': PropertySchema(
-      id: 8,
+      id: 12,
       name: r'isMaterial3Expressive',
       type: IsarType.bool,
     ),
     r'onboardingComplete': PropertySchema(
-      id: 9,
+      id: 13,
       name: r'onboardingComplete',
       type: IsarType.bool,
     ),
+    r'targetWeightKg': PropertySchema(
+      id: 14,
+      name: r'targetWeightKg',
+      type: IsarType.double,
+    ),
     r'themeModeIndex': PropertySchema(
-      id: 10,
+      id: 15,
       name: r'themeModeIndex',
       type: IsarType.long,
     ),
     r'useMetric': PropertySchema(
-      id: 11,
+      id: 16,
       name: r'useMetric',
       type: IsarType.bool,
+    ),
+    r'weeklyRateKg': PropertySchema(
+      id: 17,
+      name: r'weeklyRateKg',
+      type: IsarType.double,
+    ),
+    r'weightKg': PropertySchema(
+      id: 18,
+      name: r'weightKg',
+      type: IsarType.double,
     )
   },
   estimateSize: _appSettingsEstimateSize,
@@ -105,6 +140,7 @@ int _appSettingsEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  bytesCount += 3 + object.gender.length * 3;
   return bytesCount;
 }
 
@@ -114,18 +150,25 @@ void _appSettingsSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.customColorName);
-  writer.writeLong(offsets[1], object.customColorValue);
-  writer.writeString(offsets[2], object.geminiApiKeyOverride);
-  writer.writeDouble(offsets[3], object.goalCalories);
-  writer.writeDouble(offsets[4], object.goalCarbsG);
-  writer.writeDouble(offsets[5], object.goalFatG);
-  writer.writeDouble(offsets[6], object.goalProteinG);
-  writer.writeLong(offsets[7], object.imageQuality);
-  writer.writeBool(offsets[8], object.isMaterial3Expressive);
-  writer.writeBool(offsets[9], object.onboardingComplete);
-  writer.writeLong(offsets[10], object.themeModeIndex);
-  writer.writeBool(offsets[11], object.useMetric);
+  writer.writeLong(offsets[0], object.activityLevelIndex);
+  writer.writeLong(offsets[1], object.ageYears);
+  writer.writeString(offsets[2], object.customColorName);
+  writer.writeLong(offsets[3], object.customColorValue);
+  writer.writeString(offsets[4], object.geminiApiKeyOverride);
+  writer.writeString(offsets[5], object.gender);
+  writer.writeDouble(offsets[6], object.goalCalories);
+  writer.writeDouble(offsets[7], object.goalCarbsG);
+  writer.writeDouble(offsets[8], object.goalFatG);
+  writer.writeDouble(offsets[9], object.goalProteinG);
+  writer.writeDouble(offsets[10], object.heightCm);
+  writer.writeLong(offsets[11], object.imageQuality);
+  writer.writeBool(offsets[12], object.isMaterial3Expressive);
+  writer.writeBool(offsets[13], object.onboardingComplete);
+  writer.writeDouble(offsets[14], object.targetWeightKg);
+  writer.writeLong(offsets[15], object.themeModeIndex);
+  writer.writeBool(offsets[16], object.useMetric);
+  writer.writeDouble(offsets[17], object.weeklyRateKg);
+  writer.writeDouble(offsets[18], object.weightKg);
 }
 
 AppSettings _appSettingsDeserialize(
@@ -135,19 +178,26 @@ AppSettings _appSettingsDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = AppSettings();
-  object.customColorName = reader.readString(offsets[0]);
-  object.customColorValue = reader.readLong(offsets[1]);
-  object.geminiApiKeyOverride = reader.readStringOrNull(offsets[2]);
-  object.goalCalories = reader.readDouble(offsets[3]);
-  object.goalCarbsG = reader.readDouble(offsets[4]);
-  object.goalFatG = reader.readDouble(offsets[5]);
-  object.goalProteinG = reader.readDouble(offsets[6]);
+  object.activityLevelIndex = reader.readLong(offsets[0]);
+  object.ageYears = reader.readLong(offsets[1]);
+  object.customColorName = reader.readString(offsets[2]);
+  object.customColorValue = reader.readLong(offsets[3]);
+  object.geminiApiKeyOverride = reader.readStringOrNull(offsets[4]);
+  object.gender = reader.readString(offsets[5]);
+  object.goalCalories = reader.readDouble(offsets[6]);
+  object.goalCarbsG = reader.readDouble(offsets[7]);
+  object.goalFatG = reader.readDouble(offsets[8]);
+  object.goalProteinG = reader.readDouble(offsets[9]);
+  object.heightCm = reader.readDouble(offsets[10]);
   object.id = id;
-  object.imageQuality = reader.readLong(offsets[7]);
-  object.isMaterial3Expressive = reader.readBool(offsets[8]);
-  object.onboardingComplete = reader.readBool(offsets[9]);
-  object.themeModeIndex = reader.readLong(offsets[10]);
-  object.useMetric = reader.readBool(offsets[11]);
+  object.imageQuality = reader.readLong(offsets[11]);
+  object.isMaterial3Expressive = reader.readBool(offsets[12]);
+  object.onboardingComplete = reader.readBool(offsets[13]);
+  object.targetWeightKg = reader.readDouble(offsets[14]);
+  object.themeModeIndex = reader.readLong(offsets[15]);
+  object.useMetric = reader.readBool(offsets[16]);
+  object.weeklyRateKg = reader.readDouble(offsets[17]);
+  object.weightKg = reader.readDouble(offsets[18]);
   return object;
 }
 
@@ -159,29 +209,43 @@ P _appSettingsDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readString(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 1:
       return (reader.readLong(offset)) as P;
     case 2:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 3:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 4:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 5:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 6:
       return (reader.readDouble(offset)) as P;
     case 7:
-      return (reader.readLong(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 8:
-      return (reader.readBool(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 9:
-      return (reader.readBool(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 10:
-      return (reader.readLong(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 11:
+      return (reader.readLong(offset)) as P;
+    case 12:
       return (reader.readBool(offset)) as P;
+    case 13:
+      return (reader.readBool(offset)) as P;
+    case 14:
+      return (reader.readDouble(offset)) as P;
+    case 15:
+      return (reader.readLong(offset)) as P;
+    case 16:
+      return (reader.readBool(offset)) as P;
+    case 17:
+      return (reader.readDouble(offset)) as P;
+    case 18:
+      return (reader.readDouble(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -280,6 +344,117 @@ extension AppSettingsQueryWhere
 
 extension AppSettingsQueryFilter
     on QueryBuilder<AppSettings, AppSettings, QFilterCondition> {
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      activityLevelIndexEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'activityLevelIndex',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      activityLevelIndexGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'activityLevelIndex',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      activityLevelIndexLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'activityLevelIndex',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      activityLevelIndexBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'activityLevelIndex',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition> ageYearsEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'ageYears',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      ageYearsGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'ageYears',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      ageYearsLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'ageYears',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition> ageYearsBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'ageYears',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
       customColorNameEqualTo(
     String value, {
@@ -626,6 +801,140 @@ extension AppSettingsQueryFilter
     });
   }
 
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition> genderEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'gender',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      genderGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'gender',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition> genderLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'gender',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition> genderBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'gender',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      genderStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'gender',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition> genderEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'gender',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition> genderContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'gender',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition> genderMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'gender',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      genderIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'gender',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      genderIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'gender',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
       goalCaloriesEqualTo(
     double value, {
@@ -888,6 +1197,70 @@ extension AppSettingsQueryFilter
     });
   }
 
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition> heightCmEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'heightCm',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      heightCmGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'heightCm',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      heightCmLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'heightCm',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition> heightCmBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'heightCm',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
   QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition> idEqualTo(
       Id value) {
     return QueryBuilder.apply(this, (query) {
@@ -1018,6 +1391,72 @@ extension AppSettingsQueryFilter
   }
 
   QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      targetWeightKgEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'targetWeightKg',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      targetWeightKgGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'targetWeightKg',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      targetWeightKgLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'targetWeightKg',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      targetWeightKgBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'targetWeightKg',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
       themeModeIndexEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -1082,6 +1521,136 @@ extension AppSettingsQueryFilter
       ));
     });
   }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      weeklyRateKgEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'weeklyRateKg',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      weeklyRateKgGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'weeklyRateKg',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      weeklyRateKgLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'weeklyRateKg',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      weeklyRateKgBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'weeklyRateKg',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition> weightKgEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'weightKg',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      weightKgGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'weightKg',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      weightKgLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'weightKg',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition> weightKgBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'weightKg',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
 }
 
 extension AppSettingsQueryObject
@@ -1092,6 +1661,32 @@ extension AppSettingsQueryLinks
 
 extension AppSettingsQuerySortBy
     on QueryBuilder<AppSettings, AppSettings, QSortBy> {
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      sortByActivityLevelIndex() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'activityLevelIndex', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      sortByActivityLevelIndexDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'activityLevelIndex', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> sortByAgeYears() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ageYears', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> sortByAgeYearsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ageYears', Sort.desc);
+    });
+  }
+
   QueryBuilder<AppSettings, AppSettings, QAfterSortBy> sortByCustomColorName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'customColorName', Sort.asc);
@@ -1130,6 +1725,18 @@ extension AppSettingsQuerySortBy
       sortByGeminiApiKeyOverrideDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'geminiApiKeyOverride', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> sortByGender() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'gender', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> sortByGenderDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'gender', Sort.desc);
     });
   }
 
@@ -1183,6 +1790,18 @@ extension AppSettingsQuerySortBy
     });
   }
 
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> sortByHeightCm() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'heightCm', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> sortByHeightCmDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'heightCm', Sort.desc);
+    });
+  }
+
   QueryBuilder<AppSettings, AppSettings, QAfterSortBy> sortByImageQuality() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'imageQuality', Sort.asc);
@@ -1224,6 +1843,19 @@ extension AppSettingsQuerySortBy
     });
   }
 
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> sortByTargetWeightKg() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'targetWeightKg', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      sortByTargetWeightKgDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'targetWeightKg', Sort.desc);
+    });
+  }
+
   QueryBuilder<AppSettings, AppSettings, QAfterSortBy> sortByThemeModeIndex() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'themeModeIndex', Sort.asc);
@@ -1248,10 +1880,61 @@ extension AppSettingsQuerySortBy
       return query.addSortBy(r'useMetric', Sort.desc);
     });
   }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> sortByWeeklyRateKg() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weeklyRateKg', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      sortByWeeklyRateKgDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weeklyRateKg', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> sortByWeightKg() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weightKg', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> sortByWeightKgDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weightKg', Sort.desc);
+    });
+  }
 }
 
 extension AppSettingsQuerySortThenBy
     on QueryBuilder<AppSettings, AppSettings, QSortThenBy> {
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      thenByActivityLevelIndex() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'activityLevelIndex', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      thenByActivityLevelIndexDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'activityLevelIndex', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> thenByAgeYears() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ageYears', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> thenByAgeYearsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ageYears', Sort.desc);
+    });
+  }
+
   QueryBuilder<AppSettings, AppSettings, QAfterSortBy> thenByCustomColorName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'customColorName', Sort.asc);
@@ -1290,6 +1973,18 @@ extension AppSettingsQuerySortThenBy
       thenByGeminiApiKeyOverrideDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'geminiApiKeyOverride', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> thenByGender() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'gender', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> thenByGenderDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'gender', Sort.desc);
     });
   }
 
@@ -1340,6 +2035,18 @@ extension AppSettingsQuerySortThenBy
       thenByGoalProteinGDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'goalProteinG', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> thenByHeightCm() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'heightCm', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> thenByHeightCmDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'heightCm', Sort.desc);
     });
   }
 
@@ -1396,6 +2103,19 @@ extension AppSettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> thenByTargetWeightKg() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'targetWeightKg', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      thenByTargetWeightKgDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'targetWeightKg', Sort.desc);
+    });
+  }
+
   QueryBuilder<AppSettings, AppSettings, QAfterSortBy> thenByThemeModeIndex() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'themeModeIndex', Sort.asc);
@@ -1420,10 +2140,48 @@ extension AppSettingsQuerySortThenBy
       return query.addSortBy(r'useMetric', Sort.desc);
     });
   }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> thenByWeeklyRateKg() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weeklyRateKg', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      thenByWeeklyRateKgDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weeklyRateKg', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> thenByWeightKg() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weightKg', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> thenByWeightKgDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weightKg', Sort.desc);
+    });
+  }
 }
 
 extension AppSettingsQueryWhereDistinct
     on QueryBuilder<AppSettings, AppSettings, QDistinct> {
+  QueryBuilder<AppSettings, AppSettings, QDistinct>
+      distinctByActivityLevelIndex() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'activityLevelIndex');
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QDistinct> distinctByAgeYears() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'ageYears');
+    });
+  }
+
   QueryBuilder<AppSettings, AppSettings, QDistinct> distinctByCustomColorName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1444,6 +2202,13 @@ extension AppSettingsQueryWhereDistinct
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'geminiApiKeyOverride',
           caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QDistinct> distinctByGender(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'gender', caseSensitive: caseSensitive);
     });
   }
 
@@ -1471,6 +2236,12 @@ extension AppSettingsQueryWhereDistinct
     });
   }
 
+  QueryBuilder<AppSettings, AppSettings, QDistinct> distinctByHeightCm() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'heightCm');
+    });
+  }
+
   QueryBuilder<AppSettings, AppSettings, QDistinct> distinctByImageQuality() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'imageQuality');
@@ -1491,6 +2262,12 @@ extension AppSettingsQueryWhereDistinct
     });
   }
 
+  QueryBuilder<AppSettings, AppSettings, QDistinct> distinctByTargetWeightKg() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'targetWeightKg');
+    });
+  }
+
   QueryBuilder<AppSettings, AppSettings, QDistinct> distinctByThemeModeIndex() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'themeModeIndex');
@@ -1502,6 +2279,18 @@ extension AppSettingsQueryWhereDistinct
       return query.addDistinctBy(r'useMetric');
     });
   }
+
+  QueryBuilder<AppSettings, AppSettings, QDistinct> distinctByWeeklyRateKg() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'weeklyRateKg');
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QDistinct> distinctByWeightKg() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'weightKg');
+    });
+  }
 }
 
 extension AppSettingsQueryProperty
@@ -1509,6 +2298,19 @@ extension AppSettingsQueryProperty
   QueryBuilder<AppSettings, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<AppSettings, int, QQueryOperations>
+      activityLevelIndexProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'activityLevelIndex');
+    });
+  }
+
+  QueryBuilder<AppSettings, int, QQueryOperations> ageYearsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'ageYears');
     });
   }
 
@@ -1529,6 +2331,12 @@ extension AppSettingsQueryProperty
       geminiApiKeyOverrideProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'geminiApiKeyOverride');
+    });
+  }
+
+  QueryBuilder<AppSettings, String, QQueryOperations> genderProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'gender');
     });
   }
 
@@ -1556,6 +2364,12 @@ extension AppSettingsQueryProperty
     });
   }
 
+  QueryBuilder<AppSettings, double, QQueryOperations> heightCmProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'heightCm');
+    });
+  }
+
   QueryBuilder<AppSettings, int, QQueryOperations> imageQualityProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'imageQuality');
@@ -1576,6 +2390,12 @@ extension AppSettingsQueryProperty
     });
   }
 
+  QueryBuilder<AppSettings, double, QQueryOperations> targetWeightKgProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'targetWeightKg');
+    });
+  }
+
   QueryBuilder<AppSettings, int, QQueryOperations> themeModeIndexProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'themeModeIndex');
@@ -1585,6 +2405,18 @@ extension AppSettingsQueryProperty
   QueryBuilder<AppSettings, bool, QQueryOperations> useMetricProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'useMetric');
+    });
+  }
+
+  QueryBuilder<AppSettings, double, QQueryOperations> weeklyRateKgProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'weeklyRateKg');
+    });
+  }
+
+  QueryBuilder<AppSettings, double, QQueryOperations> weightKgProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'weightKg');
     });
   }
 }

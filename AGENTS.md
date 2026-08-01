@@ -960,7 +960,7 @@ If a feature increases friction instead of reducing it, redesign it until it fee
 
 ---
 
-# Implemented Features Status (v2.0.2)
+# Implemented Features Status (v3.0.0)
 
 The following features have been fully implemented, built, and verified in the codebase:
 
@@ -990,3 +990,9 @@ The following features have been fully implemented, built, and verified in the c
 - [x] **Gemini API Key Management**: Custom API key override setting saved securely in local preferences.
 - [x] **Offline-First & Local Storage**: 100% local database powered by Isar DB; zero cloud analytics or history uploads.
 - [x] **ZIP Export & Import**: Native Android Storage Access Framework file saving menu + smart deduplicating backup restoration.
+
+### 6. Goal Calculator & Personal Info Settings
+- [x] **Personal Info Profile**: Store height (cm), weight (kg), age (years), biological sex, and activity level locally in Isar settings.
+- [x] **Local BMR & TDEE Calculation**: Automated calculation using Mifflin-St Jeor formula and activity multipliers.
+- [x] **Weight Goal & Weekly Pace Selector**: Supports weight loss, weight gain, and weight maintenance with 0.25 kg, 0.5 kg, and 1.0 kg/week rates.
+- [x] **Macro Target Recommendation**: Instant calculation of daily calories, protein (30%), carbs (45%), and fat (25%) with 1-tap application to primary app goals.

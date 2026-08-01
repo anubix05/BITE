@@ -4,8 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 class AppTheme {
   AppTheme._();
 
-  // Fallback seed when dynamic color is loading / unavailable (Neutral Zinc)
-  static const _seedColor = Color(0xFF27272A);
+  // Fallback seed when dynamic color is loading / unavailable (Monochrome)
+  static const _seedColor = Color(0xFF000000);
 
   static const successColor = Color(0xFF34D399);
   static const warningColor = Color(0xFFFBBF24);

@@ -35,6 +35,36 @@ class SettingsNotifier extends _$SettingsNotifier {
     ref.invalidateSelf();
   }
 
+  Future<void> updatePersonalInfo({
+    double? heightCm,
+    double? weightKg,
+    int? ageYears,
+    String? gender,
+    int? activityLevelIndex,
+  }) async {
+    final current = await future;
+    if (heightCm != null) current.heightCm = heightCm;
+    if (weightKg != null) current.weightKg = weightKg;
+    if (ageYears != null) current.ageYears = ageYears;
+    if (gender != null) current.gender = gender;
+    if (activityLevelIndex != null) current.activityLevelIndex = activityLevelIndex;
+    await isarService.saveSettings(current);
+    ref.invalidate(appSettingsProvider);
+    ref.invalidateSelf();
+  }
+
+  Future<void> updateGoalCalculator({
+    double? targetWeightKg,
+    double? weeklyRateKg,
+  }) async {
+    final current = await future;
+    if (targetWeightKg != null) current.targetWeightKg = targetWeightKg;
+    if (weeklyRateKg != null) current.weeklyRateKg = weeklyRateKg;
+    await isarService.saveSettings(current);
+    ref.invalidate(appSettingsProvider);
+    ref.invalidateSelf();
+  }
+
   Future<void> setThemeMode(ThemeMode mode) async {
     final current = await future;
     current.themeModeIndex = ThemeMode.values.indexOf(mode);

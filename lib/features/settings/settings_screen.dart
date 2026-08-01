@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../core/database/isar_service.dart';
 import '../../core/models/app_settings.dart';
 import '../../core/models/meal.dart';
@@ -53,8 +54,42 @@ class SettingsScreen extends ConsumerWidget {
             ),
 
             settingsAsync.when(
-              data: (settings) => SliverList(
-                delegate: SliverChildListDelegate([
+              data: (settings) {
+                final heightStr = (settings.heightCm > 0 && !settings.heightCm.isNaN)
+                    ? '${settings.heightCm.round()} cm'
+                    : '170 cm';
+                final weightStr = (settings.weightKg > 0 && !settings.weightKg.isNaN)
+                    ? '${settings.weightKg.toStringAsFixed(1)} kg'
+                    : '70.0 kg';
+                final ageStr =
+                    (settings.ageYears > 0) ? '${settings.ageYears} yrs' : '25 yrs';
+
+                return SliverList(
+                  delegate: SliverChildListDelegate([
+                    // ── Goal Calculator & Personal Info ──
+                    _SectionHeader('Goal Calculator & Personal Info'),
+                    _BackupTile(
+                      icon: Icons.person_outline_rounded,
+                      title: 'Personal Info',
+                      subtitle: 'Height ($heightStr), Weight ($weightStr), Age ($ageStr)',
+                      color: cs.primary,
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        context.push('/settings/personal-info');
+                      },
+                    ),
+                    _BackupTile(
+                      icon: Icons.calculate_outlined,
+                      title: 'Goal Calculator',
+                      subtitle: 'Calculate target calories & macros from weight goal',
+                      color: cs.tertiary,
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        context.push('/settings/goal-calculator');
+                      },
+                    ),
+                    const SizedBox(height: 8),
+
                   // ── Nutrition Goals ──
                   _SectionHeader('Nutrition Goals'),
                   _GoalTile(
@@ -178,8 +213,9 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 40),
                 ]),
-              ),
-              loading: () => const SliverFillRemaining(
+              );
+            },
+            loading: () => const SliverFillRemaining(
                 child: Center(child: CircularProgressIndicator()),
               ),
               error: (e, _) => SliverFillRemaining(
@@ -725,12 +761,70 @@ class _ApiKeyTileState extends State<_ApiKeyTile> {
           context: context,
           builder: (ctx) => AlertDialog(
             title: const Text('Gemini API Key'),
-            content: TextField(
-              controller: controller,
-              obscureText: true,
-              decoration: const InputDecoration(
-                hintText: 'Enter your Gemini API key',
-              ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: controller,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Gemini API Key',
+                    hintText: 'AIzaSy...',
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Theme.of(ctx).colorScheme.surfaceContainerLow,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: Theme.of(ctx).colorScheme.outlineVariant.withValues(alpha: 0.4),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Mini Setup Guide:',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text('1. Tap below to open Google AI Studio in browser.', style: TextStyle(fontSize: 11)),
+                      const Text('2. Sign in & tap "Create API Key".', style: TextStyle(fontSize: 11)),
+                      const Text('3. Copy your key & paste it above.', style: TextStyle(fontSize: 11)),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: () async {
+                            final uri = Uri.parse('https://aistudio.google.com/app/apikey');
+                            try {
+                              final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+                              if (launched) return;
+                            } catch (_) {}
+                            await Clipboard.setData(ClipboardData(text: uri.toString()));
+                            if (ctx.mounted) {
+                              ScaffoldMessenger.of(ctx).showSnackBar(
+                                const SnackBar(
+                                  content: Text('URL copied to clipboard! Paste in browser to open AI Studio. 📋'),
+                                  behavior: SnackBarBehavior.floating,
+                                ),
+                              );
+                            }
+                          },
+                          icon: const Icon(Icons.open_in_new_rounded, size: 14),
+                          label: const Text(
+                            'Open Google AI Studio ↗',
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
             actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
             actions: [

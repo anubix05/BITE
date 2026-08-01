@@ -112,15 +112,44 @@ class IsarService {
   // ──────────────── Settings ────────────────
 
   Future<AppSettings?> getSettings() async {
-    return _isar.appSettings.get(1);
+    try {
+      final s = await _isar.appSettings.get(1);
+      if (s != null) _sanitizeSettings(s);
+      return s;
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<AppSettings> getOrCreateSettings() async {
-    final existing = await _isar.appSettings.get(1);
-    if (existing != null) return existing;
+    try {
+      final existing = await _isar.appSettings.get(1);
+      if (existing != null) {
+        if (_sanitizeSettings(existing)) {
+          await _isar.writeTxn(() => _isar.appSettings.put(existing));
+        }
+        return existing;
+      }
+    } catch (_) {
+      // Fallback if schema migration or deserialization fails on old storage
+      final fresh = AppSettings();
+      await _isar.writeTxn(() => _isar.appSettings.put(fresh));
+      return fresh;
+    }
     final fresh = AppSettings();
     await _isar.writeTxn(() => _isar.appSettings.put(fresh));
     return fresh;
+  }
+
+  bool _sanitizeSettings(AppSettings s) {
+    bool modified = false;
+    if (s.heightCm <= 0 || s.heightCm.isNaN || s.heightCm.isInfinite) { s.heightCm = 170.0; modified = true; }
+    if (s.weightKg <= 0 || s.weightKg.isNaN || s.weightKg.isInfinite) { s.weightKg = 70.0; modified = true; }
+    if (s.ageYears <= 0) { s.ageYears = 25; modified = true; }
+    if (s.gender.isEmpty) { s.gender = 'male'; modified = true; }
+    if (s.targetWeightKg <= 0 || s.targetWeightKg.isNaN || s.targetWeightKg.isInfinite) { s.targetWeightKg = 70.0; modified = true; }
+    if (s.weeklyRateKg <= 0 || s.weeklyRateKg.isNaN || s.weeklyRateKg.isInfinite) { s.weeklyRateKg = 0.5; modified = true; }
+    return modified;
   }
 
   Future<void> saveSettings(AppSettings settings) async {

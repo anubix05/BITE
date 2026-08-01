@@ -77,14 +77,25 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
     }
   }
   Future<void> _submit() async {
-    final text = _textController.text.trim();
-    if (text.isEmpty && _imageBytes == null) return;
     HapticFeedback.lightImpact();
 
     final hasKey = await GeminiService.instance.hasApiKey();
     if (!hasKey) {
       if (mounted) {
         await showApiKeyMissingDialog(context);
+      }
+      return;
+    }
+
+    final text = _textController.text.trim();
+    if (text.isEmpty && _imageBytes == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please describe what you ate or snap a photo to analyze. 🍛'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
       }
       return;
     }

@@ -1,10 +1,11 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dio/dio.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../database/isar_service.dart';
@@ -305,15 +306,71 @@ Rules:
 
 /// Shows a user-friendly alert dialog when the Gemini API key is missing.
 Future<void> showApiKeyMissingDialog(BuildContext context) {
+  final cs = Theme.of(context).colorScheme;
+
   return showDialog<void>(
     context: context,
     builder: (ctx) => AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      icon: const Icon(Icons.key_off_rounded, size: 40, color: Colors.amber),
+      icon: const Icon(Icons.key_off_rounded, size: 36, color: Colors.amber),
       title: const Text('Gemini API Key Required', textAlign: TextAlign.center),
-      content: const Text(
-        'The Gemini API key has not been configured.\n\nPlease add your Gemini API key in Settings -> AI Settings to use AI features like natural language parsing and photo analysis.\n\nYou can also log meals manually without an API key.',
-        textAlign: TextAlign.center,
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'A free Gemini API key is needed to use AI food recognition and natural language parsing.',
+              style: TextStyle(fontSize: 13),
+            ),
+            const SizedBox(height: 14),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: cs.surfaceContainerLow,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.4)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Mini Setup Guide:',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                  ),
+                  const SizedBox(height: 6),
+                  const Text('1. Tap below to open Google AI Studio in browser.', style: TextStyle(fontSize: 12)),
+                  const Text('2. Sign in with Google & tap "Create API Key".', style: TextStyle(fontSize: 12)),
+                  const Text('3. Copy your key and paste it in Settings.', style: TextStyle(fontSize: 12)),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () async {
+                        final uri = Uri.parse('https://aistudio.google.com/app/apikey');
+                        try {
+                          final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+                          if (launched) return;
+                        } catch (_) {}
+                        await Clipboard.setData(ClipboardData(text: uri.toString()));
+                        if (ctx.mounted) {
+                          ScaffoldMessenger.of(ctx).showSnackBar(
+                            const SnackBar(
+                              content: Text('URL copied to clipboard! Paste in browser to open AI Studio. 📋'),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        }
+                      },
+                      icon: const Icon(Icons.open_in_new_rounded, size: 16),
+                      label: const Text('Open Google AI Studio ↗', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
       actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       actions: [
@@ -327,10 +384,7 @@ Future<void> showApiKeyMissingDialog(BuildContext context) {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   side: BorderSide(
-                    color: Theme.of(ctx)
-                        .colorScheme
-                        .outline
-                        .withValues(alpha: 0.3),
+                    color: cs.outline.withValues(alpha: 0.3),
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
@@ -345,14 +399,14 @@ Future<void> showApiKeyMissingDialog(BuildContext context) {
                   context.pushNamed('settings');
                 },
                 style: FilledButton.styleFrom(
-                  backgroundColor: Theme.of(ctx).colorScheme.primary,
-                  foregroundColor: Theme.of(ctx).colorScheme.onPrimary,
+                  backgroundColor: cs.primary,
+                  foregroundColor: cs.onPrimary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
-                child: const Text('Add API Key'),
+                child: const Text('Go to Settings'),
               ),
             ),
           ],

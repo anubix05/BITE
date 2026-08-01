@@ -9,16 +9,37 @@ import '../../features/meal_detail/meal_detail_screen.dart';
 import '../../features/history/history_screen.dart';
 import '../../features/calendar/calendar_screen.dart';
 import '../../features/settings/settings_screen.dart';
+import '../../features/settings/personal_info_screen.dart';
+import '../../features/settings/goal_calculator_screen.dart';
 import '../../features/onboarding/onboarding_screen.dart';
+import '../../features/settings/providers/settings_provider.dart';
 import '../widgets/shell_scaffold.dart';
 
 part 'app_router.g.dart';
 
+class _RouterRefreshNotifier extends ChangeNotifier {
+  _RouterRefreshNotifier(Ref ref) {
+    ref.listen(settingsNotifierProvider, (_, __) => notifyListeners());
+  }
+}
+
 @riverpod
 GoRouter appRouter(Ref ref) {
+  final refreshNotifier = _RouterRefreshNotifier(ref);
+
   return GoRouter(
     initialLocation: '/',
+    refreshListenable: refreshNotifier,
     debugLogDiagnostics: false,
+    redirect: (context, state) {
+      final settings = ref.read(settingsNotifierProvider).valueOrNull;
+      if (settings != null && !settings.onboardingComplete) {
+        if (state.matchedLocation != '/onboarding') {
+          return '/onboarding';
+        }
+      }
+      return null;
+    },
     routes: [
       ShellRoute(
         builder: (context, state, child) => ShellScaffold(child: child),
@@ -53,6 +74,18 @@ GoRouter appRouter(Ref ref) {
         path: '/settings',
         name: 'settings',
         builder: (context, state) => const SettingsScreen(),
+        routes: [
+          GoRoute(
+            path: 'personal-info',
+            name: 'personal_info',
+            builder: (context, state) => const PersonalInfoScreen(),
+          ),
+          GoRoute(
+            path: 'goal-calculator',
+            name: 'goal_calculator',
+            builder: (context, state) => const GoalCalculatorScreen(),
+          ),
+        ],
       ),
       GoRoute(
         path: '/log',
